@@ -25,10 +25,11 @@ To install number python (more math operatios)
  - pip install numpy
 
 To install open CV
- - pip instal opencv-python
+ - pip install opencv-python
 
 To get networktables (To talk to our robot)
  - pip install robotpy
+ - pip install pynetworktables
  
 To get apriltags (to detect Apriltags)
  - pip install pupil-apriltags
