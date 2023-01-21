@@ -99,7 +99,7 @@ else:  # implies images are to be read
    
 
     # Outer Target Images
-    images, imagename = load_images_from_folder("./HubImgFRC")
+    images, imagename = load_images_from_folder("2023VisionSampleImages/RetroTape\.")
     #images, imagename = load_images_from_folder("./HubImgSketchup")
 
 

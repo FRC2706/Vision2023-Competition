@@ -16,8 +16,8 @@ except ImportError:
 
 # real world dimensions of the goal target
 # These are the full dimensions around both strips
-TARGET_STRIP_LENGTH = 5.0    # inches
-TARGET_STRIP_WIDTH = 2.0        # inches
+TARGET_STRIP_LENGTH = 2.0    # inches
+TARGET_STRIP_WIDTH = 4.0        # inches
 
 
 real_world_coordinates = np.array([
@@ -263,7 +263,7 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
     targets = []
     # Constant used as minimum area for fingerprinting is equal to 60% of screenWidth. (Using 
     # a value based on screenWidth scales properly if the resolution ever changes.)
-    minContourArea = 0.6 * screenWidth;
+    minContourArea = 0.6 * screenWidth
 
     final_center = -99
     YawToTarget = -99
@@ -298,17 +298,17 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
 
                 percentfill = (cntArea/(w*h))
 
-                #print("cntArea: " , cntArea)
-                #print("percent fill: ",(cntArea/(w*h)) )
+                print("cntArea: " , cntArea)
+                print("percent fill: ",(cntArea/(w*h)) )
 
-                #Filter based on too larger contour 
-                if (cntArea > 1000): continue
+                #Filter based on too large contour 
+                if (cntArea > 2500): continue
  
                 #Filter based on too small contour
-                if (cntArea < 60): continue
+                if (cntArea < 440): continue
 
                 # Filter based on percent fill
-                if (percentfill < 0.48): continue 
+                if (percentfill < 0.5): continue 
 
                 # Filter based on Angle of rotation 
 
@@ -335,15 +335,15 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                 cntMinAreaAR = float(wr)/hr
                 cntBoundRectAR = float(w)/h
 
-                #print ("cntBoundRectAR: " , cntBoundRectAR)
-                #print ("cntMinAreaAR: " , cntMinAreaAR)
+                print ("cntBoundRectAR: " , cntBoundRectAR)
+                print ("cntMinAreaAR: " , cntMinAreaAR)
 
                 # Filter based on aspect ratio (previous values: 2-3)
                 #Tape is 13 cm wide by 5 cm high - that gives aspect ration of 2.6
                 #To be flexible, lets accept (1.9 - 3.3) range 
-                if (cntBoundRectAR < 1.9 or cntBoundRectAR > 3.5): continue 
+                if (cntBoundRectAR < 0.2 or cntBoundRectAR > 0.8): continue 
 
-                cv2.rectangle(image,(x,y),(x+w,y+h),(0, 0, 255),1) 
+                cv2.rectangle(image,(x,y),(x+w,y+h),(0, 0, 255),1)
                 
                 #minAextent = float(cntArea)/(wr*hr)
 
@@ -365,7 +365,7 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
             # We will work on the filtered contour with the largest area which is the
             # first one in the list
             if (len(cntsFiltered) > 0):
-           
+                print("hi")
                 #Used to hold the 4 contour Corners
                 contourCorners = []
 
@@ -375,19 +375,29 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                 #Found candidate contours
                 #now find the following:
                 #1. center of all candiates
-                #2. average of the area 
+                #2. average of the area
 
                 #loop through candiates
                 final_center = 0
                 average_area = 0
                 foundCorners = False
 
-                for i in range(len(cntsFiltered)):
-
+                # print(cntsFiltered)
+                for i in range(1):
+                    
                     cnt = cntsFiltered[i][0]
                     cntArea = cntsFiltered[i][1]
 
-        
+                    print("first target: ", cnt)
+                    M = cv2.moments(cnt)
+                    if M["m00"] != 0:
+                        cx = int(M["m10"] / M["m00"])
+                        cy = int(M["m01"] / M["m00"])
+                    else:
+                        cx = 0
+                        cy = 0
+                    print(cx)
+
                   # limit contour to quadrilateral
                     peri = cv2.arcLength(cnt, True)
                     corners = cv2.approxPolyDP(cnt, 0.04 * peri, True)
@@ -424,19 +434,15 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
 
 
                     #Calculate the Center of each Contour
-                    M = cv2.moments(cnt)
-                    if M["m00"] != 0:
-                        cx = int(M["m10"] / M["m00"])
-                        #cy = int(M["m01"] / M["m00"])
-                    else:
-                        cx = 0
+                    
                     
                     final_center += cx
+                    print(final_center)
 
                     #find average Area
                     average_area += cntArea
                 
-                final_center = round(final_center / len(cntsFiltered))
+                # final_center = round(final_center / len(cntsFiltered))
                 average_area = average_area / len(cntsFiltered)
 
                 #Add Array to go through 4 corners, find nearest contour to final_center
