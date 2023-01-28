@@ -304,14 +304,19 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                 print("cntArea: " , cntArea)
                 print("percent fill: ",(cntArea/(w*h)) )
 
+                total_screen_pixels = screenHeight * screenWidth
+                percent_contour_area = cntArea/total_screen_pixels *100
+
                 #Filter based on too large contour 
-                if (cntArea > 2500): continue
+                # if (percent_contour_area > 100): continue
+                print('percent contour:', percent_contour_area)
  
                 #Filter based on too small contour
-                if (cntArea < 440): continue
+                if (percent_contour_area < 0.5): continue
 
+                print("percentfill:", percentfill)
                 # Filter based on percent fill
-                if (percentfill < 0.55): continue 
+                if (percentfill < 0.5): continue 
 
                 # Filter based on Angle of rotation 
 
@@ -340,6 +345,7 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                 # Filter based on aspect ratio (previous values: 2-3)
                 #Tape is 13 cm wide by 5 cm high - that gives aspect ration of 2.6
                 #To be flexible, lets accept (1.9 - 3.3) range 
+                print("aspect ratio:", cntBoundRectAR)
                 if (cntBoundRectAR < 0.2 or cntBoundRectAR > 0.8): continue 
 
                 cv2.rectangle(image,(x,y),(x+w,y+h),(0, 0, 255),1)
