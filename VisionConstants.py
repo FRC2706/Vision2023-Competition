@@ -93,7 +93,7 @@ red_blur = 1
 blue_blur = 1
 
 # define colors
-purple = (165, 0, 120)
+purple = (255, 255, 0)
 blue = (255, 0, 0)
 green = (0, 255, 0)
 red = (0, 0, 255)
@@ -110,8 +110,10 @@ upper_green = np.array([94, 255, 255])
 #lower_green = np.array([23, 50, 35])
 #upper_green = np.array([85, 255, 255])
 
-lower_yellow = np.array([10, 150, 65]) # was 14, 150, 150
-upper_yellow = np.array([30, 255, 255])
+#These values are Blue, Red, Green
+
+lower_yellow = np.array([10, 100, 100]) 
+upper_yellow = np.array([30, 255, 255]) #was 30, 255, 255
 
 # masks for red and blue cargo (HSV)
 lower_red = np.array([138,106,123])
@@ -119,5 +121,11 @@ upper_red = np.array([180,255,255])
 
 lower_blue = np.array([64,127,116]) 
 upper_blue = np.array([115,213,255]) 
+
+lower_white = np.array([240,240,240])
+upper_white = np.array([255,255,255])
+
+lower_purple = np.array([100, 85, 65])
+upper_purple = np.array([255, 190, 180])
 
 blingColour = 0

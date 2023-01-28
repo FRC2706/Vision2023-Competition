@@ -12,17 +12,17 @@ try:
 except ImportError:
     from NetworkTablePublisher import *
 
-# Note that findCargo uses findBall which uses checkBall
+# Note that findCone uses findBall which uses checkBall
 
-# Draws on the image - > contours and finds center and yaw of nearest cargo
-# Puts on network tables -> Yaw and Distance to nearest cargo ball
+# Draws on the image - > contours and finds center and yaw of nearest Cone
+# Puts on network tables -> Yaw and Distance to nearest Cone ball
 # frame is the original images, mask is a binary mask based on desired color
 # centerX is center x coordinate of image
 # centerY is center y coordinate of image
 # MergeVisionPipeLineTableName is the Network Table destination for yaw and distance
 
 # Finds the balls from the masked image and displays them on original stream + network tables
-def findCargo(frame, cameraFOV, mask, MergeVisionPipeLineTableName):
+def findCone(frame, cameraFOV, mask, MergeVisionPipeLineTableName):
     # Finds contours
     if is_cv3():
         _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
@@ -46,13 +46,13 @@ def findCargo(frame, cameraFOV, mask, MergeVisionPipeLineTableName):
 def findCone(contours, image, centerX, centerY, MergeVisionPipeLineTableName,cameraFOV):
     screenHeight, screenWidth, channels = image.shape
     # Seen vision targets (correct angle, adjacent to each other)
-    #cargo = []
+    #Cone = []
 
     if len(contours) > 0:
         # Sort contours by area size (biggest to smallest)
         cntsSorted = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)[:5]
         cntHeight = 0
-        biggestCargo = []
+        biggestCone = []
         
         for cnt in cntsSorted:
             x, y, w, h = cv2.boundingRect(cnt)
@@ -84,7 +84,7 @@ def findCone(contours, image, centerX, centerY, MergeVisionPipeLineTableName,cam
                     cy = int(M["m01"] / M["m00"])
                 else:
                     cx, cy = 0, 0
-                if (len(biggestCargo) < 3):
+                if (len(biggestCone) < 3):
 
                     ##### DRAWS CONTOUR######
                     # Gets rotated bounding rectangle of contour
@@ -106,29 +106,29 @@ def findCone(contours, image, centerX, centerY, MergeVisionPipeLineTableName,cam
                     cv2.rectangle(image, (x, y), (x + w, y + h), red, 1)
                    
                     # Appends important info to array
-                    if [cx, cy, cnt, bottomHeight] not in biggestCargo:
-                        biggestCargo.append([cx, cy, cnt, bottomHeight, cntHeight])
+                    if [cx, cy, cnt, bottomHeight] not in biggestCone:
+                        biggestCone.append([cx, cy, cnt, bottomHeight, cntHeight])
                     
 
-        # Check if there are Cargo seen
-        if (len(biggestCargo) > 0):
+        # Check if there are Cone seen
+        if (len(biggestCone) > 0):
             # copy
-            tallestCargo = biggestCargo
+            tallestCone = biggestCone
 
-            # pushes that it sees cargo to network tables
+            # pushes that it sees Cone to network tables
 
             finalTarget = []
             # Sorts targets based on tallest height (bottom of contour to top of screen or y position)
-            tallestCargo.sort(key=lambda height: math.fabs(height[3]))
+            tallestCone.sort(key=lambda height: math.fabs(height[3]))
 
 
-            #sorts closestCargo - contains center-x, center-y, contour and contour height from the
+            #sorts closestCone - contains center-x, center-y, contour and contour height from the
             #bounding rectangle.  The closest one has the largest bottom point
-            closestCargo = min(tallestCargo, key=lambda height: (math.fabs(height[3] - centerX)))
+            closestCone = min(tallestCone, key=lambda height: (math.fabs(height[3] - centerX)))
 
             # extreme points
-            #topmost = tuple(closestCargo[2][closestCargo[2][:,:,1].argmin()][0])
-            bottommost = tuple(closestCargo[2][closestCargo[2][:,:,1].argmax()][0])
+            #topmost = tuple(closestCone[2][closestCone[2][:,:,1].argmin()][0])
+            bottommost = tuple(closestCone[2][closestCone[2][:,:,1].argmax()][0])
 
             # draw extreme points
             # from https://www.pyimagesearch.com/2016/04/11/finding-extreme-points-in-contours-with-opencv/
@@ -147,7 +147,7 @@ def findCone(contours, image, centerX, centerY, MergeVisionPipeLineTableName,cam
             # pixel as 479, probably because 0-479 = 480 pixel rows
             if (int(bottommost[1]) >= screenHeight - 1):
                 # This is handing over centoid X when bottommost is in bottom row
-                xCoord = closestCargo[0]
+                xCoord = closestCone[0]
             else:
                 # This is handing over X of bottommost point
                 xCoord = bottommost[0]   
@@ -156,9 +156,9 @@ def findCone(contours, image, centerX, centerY, MergeVisionPipeLineTableName,cam
             H_FOCAL_LENGTH, V_FOCAL_LENGTH = calculateFocalLengthsFromInput(cameraFOV,screenWidth, screenHeight)
             finalTarget.append(calculateYaw(xCoord, centerX, H_FOCAL_LENGTH))
             # calculate dist and store in finalTarget1
-            finalTarget.append(calculateDistWPILib(closestCargo[4],CARGO_BALL_HEIGHT,KNOWN_CARGO_PIXEL_HEIGHT,KNOWN_CARGO_DISTANCE ))
+            finalTarget.append(calculateDistWPILib(closestCone[4],Cone_BALL_HEIGHT,KNOWN_Cone_PIXEL_HEIGHT,KNOWN_Cone_DISTANCE ))
             # calculate yaw from pure centroid and store in finalTarget2
-            finalTarget.append(calculateYaw(closestCargo[0], centerX, H_FOCAL_LENGTH))
+            finalTarget.append(calculateYaw(closestCone[0], centerX, H_FOCAL_LENGTH))
 
             #print("Yaw: " + str(finalTarget[0]))
             # Puts the yaw on screen
@@ -173,10 +173,10 @@ def findCone(contours, image, centerX, centerY, MergeVisionPipeLineTableName,cam
             cv2.putText(image, "cxYaw: " + str(finalTarget[2]), (450, 360), cv2.FONT_HERSHEY_COMPLEX, .6,
                         white)
 
-            # pushes cargo angle to network tables
-            publishNumber(MergeVisionPipeLineTableName, "YawToCargo", finalTarget[0])
-            publishNumber(MergeVisionPipeLineTableName, "DistanceToCargo", finalTarget[1])
-            publishNumber(MergeVisionPipeLineTableName, "CargoCentroid1Yaw", finalTarget[2])
+            # pushes Cone angle to network tables
+            publishNumber(MergeVisionPipeLineTableName, "YawToCone", finalTarget[0])
+            publishNumber(MergeVisionPipeLineTableName, "DistanceToCone", finalTarget[1])
+            publishNumber(MergeVisionPipeLineTableName, "ConeCentroid1Yaw", finalTarget[2])
 
         cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), white, 2)
 
@@ -195,7 +195,7 @@ def checkCone(cntArea, image_width,boundingRectContArea):
 if __name__ == "__main__":
 
     # the purpose of this code is to test the functions above
-    # findCargo uses findBall which uses checkBall
+    # findCone uses findBall which uses checkBall
     # this test does not use a real network table
     # TODO #2 get network tables working in test code
 
@@ -220,8 +220,8 @@ if __name__ == "__main__":
     # use a dummy network table for test code for now, real network tables not working
     MergeVisionPipeLineTableName = "DummyNetworkTableName"
 
-    # use findCargo, which uses findBall, which uses checkCone to generate image
-    bgrTestFoundCone = findCargo(bgrTestImage, mskBinary, MergeVisionPipeLineTableName)
+    # use findCone, which uses findBall, which uses checkCone to generate image
+    bgrTestFoundCone = findCone(bgrTestImage, mskBinary, MergeVisionPipeLineTableName)
 
     # display the visual output (nearest based on height) of findBall to verify it visually
     cv2.imshow('Test of 1 ball findBall output', bgrTestFoundCone)
@@ -254,8 +254,8 @@ if __name__ == "__main__":
     # use a dummy network table for test code for now, real network tables not working
     MergeVisionPipeLineTableName = "DummyNetworkTableName"
 
-    # use findCargo, which uses findCone, which uses checkCone to generate image
-    bgrTestFoundBall = findCargo(bgrTestImage, mskBinary, MergeVisionPipeLineTableName)
+    # use findCone, which uses findCone, which uses checkCone to generate image
+    bgrTestFoundBall = findCone(bgrTestImage, mskBinary, MergeVisionPipeLineTableName)
 
     # display the visual output (nearest based on height) of findBall to verify it visually
     cv2.imshow('Test of 2 Cone findCone output', bgrTestFoundBall)
