@@ -308,7 +308,7 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                 if (cntArea < 440): continue
 
                 # Filter based on percent fill
-                if (percentfill < 0.5): continue 
+                if (percentfill < 0.55): continue 
 
                 # Filter based on Angle of rotation 
 
@@ -317,10 +317,6 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                 #print("Y: " , y)
                 #print("W: " , w)
                 #print("H: " , h)
-               
-                
-
-                
 
                 #to get rid of height and width switching
                 if hr > wr: 
