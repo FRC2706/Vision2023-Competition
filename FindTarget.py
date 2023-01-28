@@ -34,6 +34,7 @@ MAXIMUM_TARGET_AREA = 4400
 # Finds the tape targets from the masked image and displays them on original stream + network tales
 def findTargets(frame, cameraFOV, CameraTiltAngle, mask, MergeVisionPipeLineTableName, past_distances):
 
+    
     # Taking a matrix of size 5 as the kernel 
     #kernel = np.ones((3,3), np.uint8) 
   
@@ -72,6 +73,8 @@ def findTargets(frame, cameraFOV, CameraTiltAngle, mask, MergeVisionPipeLineTabl
 
     contours = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)
 
+    # rotates frame 90 deg clockwise
+    frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
     # Take each frame
     # Gets the shape of video
     screenHeight, screenWidth, _ = frame.shape
