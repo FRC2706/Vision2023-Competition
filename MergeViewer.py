@@ -34,6 +34,7 @@ from VisionUtilities import *
 from VisionMasking import *
 from DistanceFunctions import *
 from DriverOverlay import *
+from FindAprilTag import *
 
 print()
 print("--- Merge Viewer Starting ---")
@@ -53,11 +54,12 @@ useWebCam = False
 webCamNumber = 1
 
 # ADJUST DESIRED TARGET BASED ON VIDEO OR FILES ABOVE !!!
-Driver = True
+Driver = False
 Tape = False
 Cargo = False
-Red = True 
+Red = False 
 Blue = False
+AprilTag = True 
 CameraFOV = 68.5
 CameraTiltAngle = 30
 OverlayScaleFactor = 1
@@ -99,7 +101,7 @@ else:  # implies images are to be read
    
 
     # Outer Target Images
-    images, imagename = load_images_from_folder("./HubImgFRC")
+    images, imagename = load_images_from_folder("./2023VisionSampleImages/AprilTags")
     #images, imagename = load_images_from_folder("./HubImgSketchup")
 
 
@@ -180,6 +182,10 @@ while stayInLoop or cap.isOpened():
                 boxBlur = blurImg(frame, blue_blur)
                 threshold = threshold_video(lower_blue, upper_blue, boxBlur)
             processed = findCargo(frame, CameraFOV, threshold, MergeVisionPipeLineTableName)
+        if AprilTag:
+            print("a")
+            processed = findAprilTagCorner(frame, CameraFOV, CameraTiltAngle)
+            print('blah')
 
            
 
