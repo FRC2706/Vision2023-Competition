@@ -49,6 +49,7 @@ def DetectIntakeItem(frame, MergeVisionPipeLineTableName):
     image, FoundYellow, DesiredRectFilledArea = FindRectFillAmount(image,contours,x,y,w,h)
     
     if FoundYellow == False:
+        #print("Found Yellow == False")
             #find the contours of the mask 
         if is_cv3():
             _, contours, _ = cv2.findContours(MaskPurple, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
@@ -57,10 +58,11 @@ def DetectIntakeItem(frame, MergeVisionPipeLineTableName):
         image,FoundPurple, DesiredRectFilledArea = FindRectFillAmount(image,contours,x,y,w,h)
         displayMask = MaskPurple
     else:
+        #print("Found Yello == True")
         FoundPurple = False
     
-    cv2.putText(image, "Yellow: " + str(FoundYellow), (10, round(image_height/3)), cv2.FONT_HERSHEY_COMPLEX, .4, white)
-    cv2.putText(image, "Purple: " + str(FoundPurple), (10, round(image_height/3)+40), cv2.FONT_HERSHEY_COMPLEX, .4, white)
+    cv2.putText(image, "Yellow: " + str(FoundYellow), (10, round(image_height/3)), cv2.FONT_HERSHEY_COMPLEX, .9, white)
+    cv2.putText(image, "Purple: " + str(FoundPurple), (10, round(image_height/3)+40), cv2.FONT_HERSHEY_COMPLEX, .9, white)
     cv2.putText(image, "Fill Value: " + str(DesiredRectFilledArea), (450, 360), cv2.FONT_HERSHEY_COMPLEX, .4, white)
     # pushes cargo angle to network tables
     #publishNumber(MergeVisionPipeLineTableName, "YawToCargo", finalTarget[0])
@@ -80,11 +82,12 @@ def FindRectFillAmount(image,contours,x,y,w,h):
             cntx, cnty, cntw, cnth = cv2.boundingRect(cnt)
             
             #is it inside the desired box?
-            if cntx < x+h and cnty < y+h and cntx+cntw > x and cnty+cnth > y and cv2.contourArea(cnt)/(cntw*cnth) >0.1 and cntw<(w*2) and cnth<h*2:
+            if cntx < x+h and cnty < y+h and cntx+cntw > x and cnty+cnth > y and cv2.contourArea(cnt)/(cntw*cnth) >0.1:
+            #and cntw<(w*2) and cnth<h*2:     WHAT????????
                 cv2.drawContours(image, [cnt], 0, green, 2)
                 # Calculate Contour area
                 cntsArea += cv2.contourArea(cnt)
-                ##print("Area of contour: " + str(cntArea))
+                print("Area of contour: " + str(cntsArea))
         desiredRectArea = w*h
         #percentage of contours in desired rect
         desiredRectFilledArea = float(cntsArea/desiredRectArea)
