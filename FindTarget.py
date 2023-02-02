@@ -74,7 +74,7 @@ def findTargets(frame, cameraFOV, CameraTiltAngle, mask, MergeVisionPipeLineTabl
     contours = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)
 
     # rotates frame 90 deg clockwise
-    frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+    # frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
     # Take each frame
     # Gets the shape of video
     screenHeight, screenWidth, _ = frame.shape
@@ -194,6 +194,8 @@ def compute_output_values(rvec, tvec, cameraTiltAngle):
     angle2InRad = math.atan2(pzero_world[0][0], pzero_world[2][0])
     angle2 = math.degrees(angle2InRad)
 
+    # distance = 
+
     return distance, angle1, angle2
 
 #Simple function that displays 4 corners on an image
@@ -263,10 +265,10 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
     #global warped
     screenHeight, screenWidth, channels = image.shape
     # Seen vision targets (correct angle, adjacent to each other)
-    targets = []
+    # targets = []
     # Constant used as minimum area for fingerprinting is equal to 60% of screenWidth. (Using 
     # a value based on screenWidth scales properly if the resolution ever changes.)
-    minContourArea = 0.6 * screenWidth
+    # minContourArea = 0.6 * screenWidth
 
     final_center = -99
     YawToTarget = -99
@@ -308,11 +310,11 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                 percent_contour_area = cntArea/total_screen_pixels *100
 
                 #Filter based on too large contour 
-                # if (percent_contour_area > 100): continue
+                # if cntArea > 2500 or cntArea < 440: continue
                 print('percent contour:', percent_contour_area)
  
                 #Filter based on too small contour
-                if (percent_contour_area < 0.5): continue
+                if (percent_contour_area < 0.05): continue
 
                 print("percentfill:", percentfill)
                 # Filter based on percent fill
@@ -437,9 +439,7 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                    # cv2.circle(image, extTop, 8, (255, 0, 0), -1)
                    # cv2.circle(image, extBot, 8, (255, 255, 0), -1)
 
-
-                    #Calculate the Center of each Contour
-                    
+                    #Calculate the Center of each Contour                    
                     
                     final_center += cx
                     print(final_center)
