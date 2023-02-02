@@ -183,9 +183,7 @@ while stayInLoop or cap.isOpened():
                 threshold = threshold_video(lower_blue, upper_blue, boxBlur)
             processed = findCargo(frame, CameraFOV, threshold, MergeVisionPipeLineTableName)
         if AprilTag:
-            print("a")
             processed = findAprilTagCorner(frame, CameraFOV, CameraTiltAngle)
-            print('blah')
 
            
 
