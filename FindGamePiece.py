@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import numpy as geek
 import math
 from VisionUtilities import * 
 from VisionConstants import *
@@ -49,7 +50,6 @@ def DetectIntakeItem(frame, MergeVisionPipeLineTableName):
     image, FoundYellow, DesiredRectFilledArea = FindRectFillAmount(image,contours,x,y,w,h)
     
     if FoundYellow == False:
-        #print("Found Yellow == False")
             #find the contours of the mask 
         if is_cv3():
             _, contours, _ = cv2.findContours(MaskPurple, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
@@ -58,7 +58,6 @@ def DetectIntakeItem(frame, MergeVisionPipeLineTableName):
         image,FoundPurple, DesiredRectFilledArea = FindRectFillAmount(image,contours,x,y,w,h)
         displayMask = MaskPurple
     else:
-        #print("Found Yello == True")
         FoundPurple = False
     
     cv2.putText(image, "Yellow: " + str(FoundYellow), (10, round(image_height/3)), cv2.FONT_HERSHEY_COMPLEX, .9, white)
@@ -85,6 +84,11 @@ def FindRectFillAmount(image,contours,x,y,w,h):
             if cntx < x+h and cnty < y+h and cntx+cntw > x and cnty+cnth > y and cv2.contourArea(cnt)/(cntw*cnth) >0.1:
             #and cntw<(w*2) and cnth<h*2:     WHAT????????
                 cv2.drawContours(image, [cnt], 0, green, 2)
+                #find and draw center of cnt
+                M = cv2.moments(cnt)
+                cntx = int(M["m10"] / M["m00"])
+                cnty = int(M["m01"] / M["m00"])
+                cv2.circle(image, (cntx, cnty), 7, (255, 255, 255), -1)
                 # Calculate Contour area
                 cntsArea += cv2.contourArea(cnt)
                 print("Area of contour: " + str(cntsArea))
