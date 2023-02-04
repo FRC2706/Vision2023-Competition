@@ -79,8 +79,9 @@ def apriltag_outer_corner(image, cameraFOV, CameraTiltAngle,MergeVisionPipeLineT
     
     corners = np.empty
     #print("before results")
-    min_distance = -1
+    # min_distance = -1
 
+    d_to_r = {}
     for r in results:
 
         if (r.hamming == 0):
@@ -118,11 +119,12 @@ def apriltag_outer_corner(image, cameraFOV, CameraTiltAngle,MergeVisionPipeLineT
             corners = np.array(r.corners)
             if np.size(corners) >= 4:
                 distance, yaw = calc_distance(image, cameraFOV, corners, CameraTiltAngle)
-                if min_distance == -1:
-                    min_distance = distance
-                else:
-                    if distance < min_distance:
-                        min_distance = distance
+                d_to_r[distance] = r
+                # if min_distance == -1:
+                #     min_distance = distance
+                # else:
+                #     if distance < min_distance:
+                #         min_distance = distance
 
                 cv2.putText(image, f"ft: {round(distance/12, 2)}", (ptA[0], ptA[1] + 15),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
@@ -137,8 +139,12 @@ def apriltag_outer_corner(image, cameraFOV, CameraTiltAngle,MergeVisionPipeLineT
 
             else:
                 print("hello world")
-                distance = -1 
+                distance = -1
+    min_distance = min(d_to_r.values())
     print("Ft:", round(min_distance/12, 2))
+
+    closest_apriltag = d_to_r[min_distance]
+    print(closest_apriltag)
     # publishNumber(MergeVisionPipeLineTableName, "DistanceToTarget", round(distance/12,2))
                 
                 
