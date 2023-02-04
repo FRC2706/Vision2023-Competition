@@ -26,10 +26,10 @@ detector = Detector(
    decode_sharpening=0.5,
 )
 #main function 
-def findAprilTagCorner(image, cameraFOV, CameraTiltAngle):
-    apriltag_outer_corner(image, cameraFOV, CameraTiltAngle)
+def findAprilTagCorner(image, cameraFOV, CameraTiltAngle,MergeVisionPipeLineTableName):
+    apriltag_outer_corner(image, cameraFOV, CameraTiltAngle,MergeVisionPipeLineTableName)
     #print("length: ",np.size(corners))
-    return image 
+    return image
 
 def calc_distance(image, cameraFOV, corners, CameraTiltAngle):
         size = image.shape
@@ -54,18 +54,18 @@ def calc_distance(image, cameraFOV, corners, CameraTiltAngle):
         pnpsucsess, rvec, tvec = cv2.solvePnP(object_points, corners, camera_matrix, dist_coeffs, flags = cv2.SOLVEPNP_IPPE_SQUARE)
         s, rvec, tvec = findTvecRvec(image, corners, real_world_coordinates, H_FOCAL_LENGTH, V_FOCAL_LENGTH)
         distance, angle1, angle2 = compute_output_values(rvec, tvec, CameraTiltAngle)
-        return distance 
+        return distance, angle1
 
 
-def apriltag_outer_corner(image, cameraFOV, CameraTiltAngle):
+def apriltag_outer_corner(image, cameraFOV, CameraTiltAngle,MergeVisionPipeLineTableName):
 
     detector = Detector(
-    families="tag16h5",
-    nthreads=1,
-    quad_decimate=1.0,
-    quad_sigma=0.0,
-    refine_edges=1,
-    decode_sharpening=0.5,
+        families="tag16h5",
+        nthreads=1,
+        quad_decimate=1.0,
+        quad_sigma=0.0,
+        refine_edges=1,
+        decode_sharpening=0.5,
     )
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
@@ -104,15 +104,25 @@ def apriltag_outer_corner(image, cameraFOV, CameraTiltAngle):
         
         # Put the text for the id of the tag
             cv2.putText(image, f"id: {r.tag_id}", (ptA[0], ptA[1] - 15),
-            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
             corners = np.array(r.corners)
+            if np.size(corners) >= 4:
+                distance, yaw = calc_distance(image, cameraFOV, corners, CameraTiltAngle)
+                publishNumber(MergeVisionPipeLineTableName, "DistanceToTarget", round(distance/12,2))
 
-            distance = calc_distance(image, cameraFOV, corners, CameraTiltAngle)
-            cv2.putText(image, f"d: {round(distance, 2)}", (ptA[0], ptA[1] + 15),
-            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-            #cv2.putText(image, f"d: " {distance}, (ptA[0], ptA[1] + 15),
-            #cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-  
-        # Get the corners of the target in a numpy array for solvePnP
+                cv2.putText(image, f"d: {round(distance, 2)}", (ptA[0], ptA[1] + 15),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
-    
+                cv2.putText(image, f"yaw: {round(yaw, 2)}", (ptA[0], ptA[1] + 40),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+                  
+                #cv2.putText(image, f"d: " {distance}, (ptA[0], ptA[1] + 15),
+                #cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            
+            # Get the corners of the target in a numpy array for solvePnP
+
+            else:
+                print("hello world")
+                distance = -1 
+                
+        
