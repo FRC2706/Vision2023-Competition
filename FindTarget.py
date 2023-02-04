@@ -573,7 +573,7 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                     publishNumber(MergeVisionPipeLineTableName, "AverageDistance", round(average_distance/12,2))
                     publishNumber(MergeVisionPipeLineTableName, "RobotYawToTarget", round(RobotYawToTarget,2))
                     publishNumber(MergeVisionPipeLineTableName, "TargetPixelFromCenter", round(final_center-centerX,2))
-                       
+
             else:
                 #If Nothing is found, publish -99 and -1 to Network table
                 publishNumber(MergeVisionPipeLineTableName, "YawToTarget", -99)

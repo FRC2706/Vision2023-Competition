@@ -207,9 +207,7 @@ MergeVisionPipeLineTableName = data["networkTableName"]
 MergeVisionReadPipeLineTableName = data["networkTableReadName"]
 DriverEnabled = data["Driver"]
 TapeEnabled = data["Tape"]
-CargoEnabled = data["Cargo"]
-RedEnabled = data["Red"]
-BlueEnabled = data["Blue"]
+AprilTagsEnabled = data["AprilTag"]
 OutputStream = data["OutputStream"]
 ExposureTape = data["ExposureTarget"]
 ExposureBall = data["ExposureBall"]
@@ -226,7 +224,7 @@ if DriverEnabled:
 elif TapeEnabled:
     switch = 2
 
-elif CargoEnabled:
+elif AprilTagsEnabled:
     switch = 3
 
 class CameraConfig: pass
@@ -400,9 +398,7 @@ if __name__ == "__main__":
     #PipeLine Table Values, Unique for Each PipeLine
     networkTableVisionPipeline.putBoolean("Driver", DriverEnabled)
     networkTableVisionPipeline.putBoolean("Tape", TapeEnabled)
-    networkTableVisionPipeline.putBoolean("Cargo", CargoEnabled)
-    networkTableVisionPipeline.putBoolean("Red", RedEnabled)
-    networkTableVisionPipeline.putBoolean("Blue", BlueEnabled)
+    networkTableVisionPipeline.putBoolean("AprilTags", AprilTagsEnabled)
     #networkTable.putBoolean("ControlPanel", False)
     networkTableVisionPipeline.putBoolean("WriteImages", False)
     networkTableVisionPipeline.putBoolean("SendMask", False)
@@ -516,7 +512,7 @@ if __name__ == "__main__":
             processed = DriverOverlay(frame, CameraFOV, NTOverlayScaleFactor, TargetPixelFromCenter, yaw, distance)
            
 
-      
+        '''
         if (networkTableVisionPipeline.getBoolean("Cargo", True)):
             # Checks if you just want to look for Cargo
             switch = 3
@@ -534,9 +530,22 @@ if __name__ == "__main__":
                 processed = threshold
             else:   
                 processed = findCargo(frame, CameraFOV, threshold, MergeVisionPipeLineTableName)
+        '''
+        #
+        if (networkTableVisionPipeline.getBoolean("AprilTags", True)):
+            switch = 3
+            #Method = int(networkTableVisionPipeline.getNumber("Method", 7))
+            # threshold = threshold_video(lower_green, upper_green, frame)
+            if (networkTableVisionPipeline.getBoolean("SendMask", False)):
+                processed = threshold
+            else:
+                processed, final_center, YawToTarget, distance = findTargets(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
+                #Read RPM From Network Table
+                rpm = networkTableVisionPipeline.getNumber("RPM", 0)
+                if rpm != 0:
+                    cv2.putText(processed, "RPM: " + str(round(rpm,2)), (20, 340), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
 
-           
-                          
+        #                          
 
         # Puts timestamp of camera on network tables
         networkTableVisionPipeline.putNumber("VideoTimestamp", timestamp)
