@@ -28,7 +28,7 @@ from threading import Thread
 
 # Imports EVERYTHING from these files
 from FindBall import *
-from FindGamePiece import *
+from DetectIntakeItem import *
 from FindTarget import *
 from VisionConstants import *
 from VisionUtilities import *
@@ -98,7 +98,7 @@ else:  # implies images are to be read
    
 
     # Outer Target Images
-    images, imagename = load_images_from_folder("./2023VisionSampleImages/ConeCube")
+    images, imagename = load_images_from_folder("./2023VisionSampleImages/AprilTags")
     #images, imagename = load_images_from_folder("./HubImgSketchup")
 
 

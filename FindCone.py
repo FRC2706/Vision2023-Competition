@@ -18,96 +18,95 @@ except ImportError:
 # Puts on network tables -> Yaw and Distance to nearest Cone ball
 # frame is the original images, mask is a binary mask based on desired color
 # centerX is center x coordinate of image
-# centerY is center y coordinate of image
 # MergeVisionPipeLineTableName is the Network Table destination for yaw and distance
 
 # Finds the balls from the masked image and displays them on original stream + network tables
-def findCone(frame, cameraFOV, mask, MergeVisionPipeLineTableName):
-    # Finds contours
-    if is_cv3():
-        _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
-    else:
-        contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
-
-    # Take each frame
-    # Gets the shape of video
-    screenHeight, screenWidth, _ = frame.shape
-    # Gets center of height and width
-    centerX = (screenWidth / 2) - .5
-    centerY = (screenHeight / 2) - .5
+def findCone(frame, MergeVisionPipeLineTableName):
     # Copies frame and stores it in image
     image = frame.copy()
+    #Create a yellow mask
+    MaskYellow = threshold_video(lower_yellow, upper_yellow, image)
+    #find the contours of the mask 
+    if is_cv3():
+        _, contours, _ = cv2.findContours(MaskYellow, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
+    else:
+        contours, _ = cv2.findContours(MaskYellow, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
+
+    
     # Processes the contours, takes in (contours, output_image, (centerOfImage)
     if len(contours) != 0:
-        image = findCone(contours, image, centerX, centerY, MergeVisionPipeLineTableName, cameraFOV)
+        image = findCones(contours, image)
     # Shows the contours overlayed on the original video
     return image
 
-def findCone(contours, image, centerX, centerY, MergeVisionPipeLineTableName,cameraFOV):
+def findCones(contours, image):
     screenHeight, screenWidth, channels = image.shape
-    # Seen vision targets (correct angle, adjacent to each other)
-    #Cone = []
+    # Gets center of width
+    centerX = (screenWidth / 2) - .5
 
-    if len(contours) > 0:
         # Sort contours by area size (biggest to smallest)
-        cntsSorted = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)[:5]
-        cntHeight = 0
-        biggestCone = []
-        
-        for cnt in cntsSorted:
-            x, y, w, h = cv2.boundingRect(cnt)
+    cntsSorted = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)[:5]#what is this 5?
+    cntHeight = 0
+    biggestCone = []
+    
+    for cnt in cntsSorted:
+        x, y, w, h = cv2.boundingRect(cnt)
 
-            ##print("Area of bounding rec: " + str(w*h))
-            boundingRectArea = w*h
+        boundingRectArea = w*h
+        ##print("Area of bounding rec: " + str(boundingRectArea))
+        # Calculate Contour area
+        cntArea = cv2.contourArea(cnt)
+        print("Area of contour: " + str(cntArea))
+        #calculate area of a cone standing up at that size
+        expectedArea = (w*(h/5))+((w*(2/3))*(h*(4/5))/2)
+        print("expected area: " + str(expectedArea))
 
-            # Calculate Contour area
-            cntArea = cv2.contourArea(cnt)
-            ##print("Area of contour: " + str(cntArea))
+        #percentage of contour in bounding rect
+        boundingRectContArea = float(cntArea/boundingRectArea)
+        #print("Percentage contour area in bounding rect: " + str(boundingRectContArea))
+        #percentage of contour in area of a cone standing up at that size
+        expectedAreaContArea = float(cntArea/expectedArea)
+        print("percentage of contour in area of a cone standing up at that size: " + str(expectedAreaContArea))
 
-            #percentage of contour in bounding rect
-            boundingRectContArea = float(cntArea/boundingRectArea)
-            #print("Percentage contour area in bounding rect: " + str(boundingRectContArea))
-            cntHeight = h
-            #find the height of the bottom (y position of contour)
-            # which is just the y value plus the height
-            bottomHeight = y+h
-            #aspect_ratio = float(w) / h
-            # Get moments of contour; mainly for centroid
-            M = cv2.moments(cnt)
+        #find the height of the bottom (y position of contour)
+        # which is just the y value plus the height
+        bottomHeight = y+h
+        # Get moments of contour; mainly for centroid
+        M = cv2.moments(cnt)
 
-            # Filters contours based off of size
-            if (checkCone(cntArea, image_width, boundingRectContArea)):
-                ### MOSTLY DRAWING CODE, BUT CALCULATES IMPORTANT INFO ###
-                # Gets the centeroids of contour
-                if M["m00"] != 0:
-                    cx = int(M["m10"] / M["m00"])
-                    cy = int(M["m01"] / M["m00"])
-                else:
-                    cx, cy = 0, 0
-                if (len(biggestCone) < 3):
+        # Filters contours based off of size
+        if (checkCone(cntArea, image_width, boundingRectContArea)):
+            ### MOSTLY DRAWING CODE, BUT CALCULATES IMPORTANT INFO ###
+            # Gets the centeroids of contour
+            if M["m00"] != 0:
+                cx = int(M["m10"] / M["m00"])
+                cy = int(M["m01"] / M["m00"])
+            else:
+                cx, cy = 0, 0
+            if (len(biggestCone) < 3):
 
-                    ##### DRAWS CONTOUR######
-                    # Gets rotated bounding rectangle of contour
-                    #rect = cv2.minAreaRect(cnt)
-                    # Creates box around that rectangle
-                    #box = cv2.boxPoints(rect)
-                    # Covert boxpoints to integer
-                    #box = np.int0(box)
+                ##### DRAWS CONTOUR######
+                # Gets rotated bounding rectangle of contour
+                #rect = cv2.minAreaRect(cnt)
+                # Creates box around that rectangle
+                #box = cv2.boxPoints(rect)
+                # Covert boxpoints to integer
+                #box = np.int0(box)
                    
-                    # Draws a vertical white line passing through center of contour
-                    cv2.line(image, (cx, screenHeight), (cx, 0), white)
-                    # Draws a white circle at center of contour
-                    cv2.circle(image, (cx, cy), 6, white)
+                # Draws a vertical white line passing through center of contour
+                cv2.line(image, (cx, screenHeight), (cx, 0), white)
+                # Draws a white circle at center of contour
+                cv2.circle(image, (cx, cy), 6, white)
 
-                    # Draws the contours
-                    cv2.drawContours(image, [cnt], 0, green, 2)
+                # Draws the contours
+                cv2.drawContours(image, [cnt], 0, green, 2)
 
-                    # Draws contour of bounding rectangle in red
-                    cv2.rectangle(image, (x, y), (x + w, y + h), red, 1)
+                # Draws contour of bounding rectangle in red
+                cv2.rectangle(image, (x, y), (x + w, y + h), red, 1)
                    
-                    # Appends important info to array
-                    if [cx, cy, cnt, bottomHeight] not in biggestCone:
-                        biggestCone.append([cx, cy, cnt, bottomHeight, cntHeight])
+                # Appends important info to array
+                if [cx, cy, cnt, bottomHeight] not in biggestCone:
+                    biggestCone.append([cx, cy, cnt, bottomHeight, cntHeight])
                     
 
         # Check if there are Cone seen
