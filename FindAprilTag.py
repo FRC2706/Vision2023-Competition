@@ -6,6 +6,11 @@ import cv2
 import numpy as np
 from math import degrees
 
+try:
+    from PrintPublisher import *
+except ImportError:
+    from NetworkTablePublisher import *
+
 # Marker size and object
 marker_size = 5 + 15/16.0   # FRC targets might be a different size
 
@@ -51,7 +56,7 @@ def calc_distance(image, cameraFOV, corners, CameraTiltAngle):
         dist_coeffs = np.array([[0.16171335604097975, -0.9962921370737408, -4.145368586842373e-05, 
                                 0.0015152030328047668, 1.230483016701437]])
 
-        pnpsucsess, rvec, tvec = cv2.solvePnP(object_points, corners, camera_matrix, dist_coeffs, flags = cv2.SOLVEPNP_IPPE_SQUARE)
+        pnpsuccess, rvec, tvec = cv2.solvePnP(object_points, corners, camera_matrix, dist_coeffs, flags = cv2.SOLVEPNP_IPPE_SQUARE)
         s, rvec, tvec = findTvecRvec(image, corners, real_world_coordinates, H_FOCAL_LENGTH, V_FOCAL_LENGTH)
         distance, angle1, angle2 = compute_output_values(rvec, tvec, CameraTiltAngle)
         return distance, angle1
@@ -74,9 +79,14 @@ def apriltag_outer_corner(image, cameraFOV, CameraTiltAngle,MergeVisionPipeLineT
     
     corners = np.empty
     #print("before results")
+    min_distance = -1
+
     for r in results:
-        
+
         if (r.hamming == 0):
+            print("-------------------------------------")
+            print(r)
+            print("-------------------------------------")
             (ptA, ptB, ptC, ptD) = r.corners
         
             # extract the bounding box (x, y)-coordinates for the AprilTag
@@ -108,9 +118,13 @@ def apriltag_outer_corner(image, cameraFOV, CameraTiltAngle,MergeVisionPipeLineT
             corners = np.array(r.corners)
             if np.size(corners) >= 4:
                 distance, yaw = calc_distance(image, cameraFOV, corners, CameraTiltAngle)
-                publishNumber(MergeVisionPipeLineTableName, "DistanceToTarget", round(distance/12,2))
+                if min_distance == -1:
+                    min_distance = distance
+                else:
+                    if distance < min_distance:
+                        min_distance = distance
 
-                cv2.putText(image, f"d: {round(distance, 2)}", (ptA[0], ptA[1] + 15),
+                cv2.putText(image, f"ft: {round(distance/12, 2)}", (ptA[0], ptA[1] + 15),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
                 cv2.putText(image, f"yaw: {round(yaw, 2)}", (ptA[0], ptA[1] + 40),
@@ -124,5 +138,8 @@ def apriltag_outer_corner(image, cameraFOV, CameraTiltAngle,MergeVisionPipeLineT
             else:
                 print("hello world")
                 distance = -1 
+    print("Ft:", round(min_distance/12, 2))
+    # publishNumber(MergeVisionPipeLineTableName, "DistanceToTarget", round(distance/12,2))
+                
                 
         
