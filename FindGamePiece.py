@@ -92,12 +92,14 @@ def FindRectFillAmount(image,contours,x,y,w,h):
 
                 # Calculate Contour area
                 cntsArea += cv2.contourArea(cnt)
-                print("Area of contour: " + str(cntsArea))
-                
+                print("Area2 of contour: " + str(cntsArea))
+                print("here")
+    
                 #find the difference between center of game piece and desired placement
                 p=[cntx,cnty]
                 q=[200,350]
                 print(math.dist(p,q))
+                
 
                 
         desiredRectArea = w*h
