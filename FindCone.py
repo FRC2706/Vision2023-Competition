@@ -35,9 +35,9 @@ def findCone(frame, MergeVisionPipeLineTableName):
     
     # Processes the contours, takes in (contours, output_image, (centerOfImage)
     if len(contours) != 0:
-        image = findCones(contours, image)
+        image,Yaw = findCones(contours, image)
     # Shows the contours overlayed on the original video
-    return image
+    return image, Yaw
 
 def findCones(contours, image):
     screenHeight, screenWidth, channels = image.shape
@@ -50,6 +50,9 @@ def findCones(contours, image):
     biggestCone = []
     
     for cnt in cntsSorted:
+        
+        cv2.drawContours(image, [cnt], 0, green, 2)
+
         x, y, w, h = cv2.boundingRect(cnt)
 
         boundingRectArea = w*h
@@ -95,11 +98,9 @@ def findCones(contours, image):
                    
                 # Draws a vertical white line passing through center of contour
                 cv2.line(image, (cx, screenHeight), (cx, 0), white)
-                # Draws a white circle at center of contour
-                cv2.circle(image, (cx, cy), 6, white)
 
                 # Draws the contours
-                cv2.drawContours(image, [cnt], 0, green, 2)
+                #cv2.drawContours(image, [cnt], 0, green, 2)
 
                 # Draws contour of bounding rectangle in red
                 cv2.rectangle(image, (x, y), (x + w, y + h), red, 1)
@@ -152,10 +153,10 @@ def findCones(contours, image):
                 xCoord = bottommost[0]   
 
             # calculate yaw and store in finalTarget0
-            H_FOCAL_LENGTH, V_FOCAL_LENGTH = calculateFocalLengthsFromInput(cameraFOV,screenWidth, screenHeight)
+            H_FOCAL_LENGTH, V_FOCAL_LENGTH = calculateFocalLengthsFromInput(screenWidth, screenHeight)
             finalTarget.append(calculateYaw(xCoord, centerX, H_FOCAL_LENGTH))
             # calculate dist and store in finalTarget1
-            finalTarget.append(calculateDistWPILib(closestCone[4],Cone_BALL_HEIGHT,KNOWN_Cone_PIXEL_HEIGHT,KNOWN_Cone_DISTANCE ))
+            finalTarget.append(404)#calculateDistWPILib(closestCone[4],CONE_HEIGHT,KNOWN_CONE_PIXEL_HEIGHT,KNOWN_CONE_DISTANCE ))
             # calculate yaw from pure centroid and store in finalTarget2
             finalTarget.append(calculateYaw(closestCone[0], centerX, H_FOCAL_LENGTH))
 
@@ -163,103 +164,27 @@ def findCones(contours, image):
             # Puts the yaw on screen
             # Draws yaw of target + line where center of target is
             #finalYaw = round(finalTarget[1]*1000)/1000
-            cv2.putText(image, "Yaw: " + str(finalTarget[0]), (40, 360), cv2.FONT_HERSHEY_COMPLEX, .6,
-                        white)
-            cv2.putText(image, "Dist: " + str(finalTarget[1]), (40, 400), cv2.FONT_HERSHEY_COMPLEX, .6,
+            cv2.putText(image, "Yaw: " + str(finalTarget[0]), (40, 200), cv2.FONT_HERSHEY_COMPLEX, .6,
                         white)
             cv2.line(image, (xCoord, screenHeight), (xCoord, 0), blue, 2)
 
-            cv2.putText(image, "cxYaw: " + str(finalTarget[2]), (450, 360), cv2.FONT_HERSHEY_COMPLEX, .6,
+            cv2.putText(image, "cxYaw (Used): " + str(finalTarget[2]), (40, 250), cv2.FONT_HERSHEY_COMPLEX, .6,
                         white)
 
             # pushes Cone angle to network tables
-            publishNumber(MergeVisionPipeLineTableName, "YawToCone", finalTarget[0])
-            publishNumber(MergeVisionPipeLineTableName, "DistanceToCone", finalTarget[1])
-            publishNumber(MergeVisionPipeLineTableName, "ConeCentroid1Yaw", finalTarget[2])
+            #publishNumber(MergeVisionPipeLineTableName, "YawToCone", finalTarget[0])
+            #publishNumber(MergeVisionPipeLineTableName, "DistanceToCone", finalTarget[1])
+            #publishNumber(MergeVisionPipeLineTableName, "ConeCentroid1Yaw", finalTarget[2])
+        else:
+            finalTarget = [0,0,0]
 
         cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), white, 2)
 
-        return image
+        return image, finalTarget[2]
 
-# Checks if ball contours are worthy based off of contour area and (not currently) hull area
+# Checks if cone contours are worthy based off of contour area and (not currently) hull area
 def checkCone(cntArea, image_width,boundingRectContArea):
-    #this checks that the area of the contour is greater than the image width divide by 2
-    #It also checks the percentage of the area of the bounding rectangle is
-    #greater than 69%.  
-    #print("cntArea " + str(cntArea))
-    print(str(cntArea) + " IMGWIDTH " + str(image_width) + " BOUNDING rect cont area " + str(boundingRectContArea))
-    return (cntArea > (image_width*2)) and (boundingRectContArea < 0.7) and (boundingRectContArea > 0.44)
-    
-
-if __name__ == "__main__":
-
-    # the purpose of this code is to test the functions above
-    # findCone uses findBall which uses checkBall
-    # this test does not use a real network table
-    # TODO #2 get network tables working in test code
-
-    # create empty bgr image for the test
-    bgrTestImage = np.zeros(shape=[240, 320, 3], dtype=np.uint8)
-
-    # draw a yellow rectangle on the test image
-    bgrTestImage = cv2.circle(bgrTestImage,(100,100), 50, (0,255,255),-1)
-
-    # display the test image to verify it visually
-    cv2.imshow('This is the test', bgrTestImage)
-    
-    # convert image to hsv from bgr
-    hsvTestImage = cv2.cvtColor(bgrTestImage, cv2.COLOR_BGR2HSV)
-
-    # using inrange from opencv make mask
-    mskBinary = cv2.inRange(hsvTestImage, (29,254,254), (31,255,255)) # (30, 255, 255)
-
-    # display the mask to verify it visually
-    cv2.imshow('This is the mask', mskBinary)
-
-    # use a dummy network table for test code for now, real network tables not working
-    MergeVisionPipeLineTableName = "DummyNetworkTableName"
-
-    # use findCone, which uses findBall, which uses checkCone to generate image
-    bgrTestFoundCone = findCone(bgrTestImage, mskBinary, MergeVisionPipeLineTableName)
-
-    # display the visual output (nearest based on height) of findBall to verify it visually
-    cv2.imshow('Test of 1 ball findBall output', bgrTestFoundCone)
-
-    # wait for user input to close
-    cv2.waitKey(0)
-
-    # cleanup so we can do second test of two balls
-    cv2.destroyAllWindows()
-
-    # create empty bgr image for the test
-    bgrTestImage = np.zeros(shape=[240, 320, 3], dtype=np.uint8)
-
-    # draw two yellow circle on the test image
-    bgrTestImage = cv2.circle(bgrTestImage,(100,100), 50, (0,255,255),-1)
-    bgrTestImage = cv2.circle(bgrTestImage,(280,105), 45, (0,255,255),-1)
-
-    # display the test image to verify it visually
-    cv2.imshow('This is the test', bgrTestImage)
-    
-    # convert image to hsv from bgr
-    hsvTestImage = cv2.cvtColor(bgrTestImage, cv2.COLOR_BGR2HSV)
-
-    # using inrange from opencv make mask
-    mskBinary = cv2.inRange(hsvTestImage, (29,254,254), (31,255,255)) # (30, 255, 255)
-    
-    # display the mask to verify it visually
-    cv2.imshow('This is the mask', mskBinary)
-
-    # use a dummy network table for test code for now, real network tables not working
-    MergeVisionPipeLineTableName = "DummyNetworkTableName"
-
-    # use findCone, which uses findCone, which uses checkCone to generate image
-    bgrTestFoundBall = findCone(bgrTestImage, mskBinary, MergeVisionPipeLineTableName)
-
-    # display the visual output (nearest based on height) of findBall to verify it visually
-    cv2.imshow('Test of 2 Cone findCone output', bgrTestFoundBall)
-
-    # wait for user input to close
-    cv2.waitKey(0)
-    # cleanup and exit
-    cv2.destroyAllWindows()
+    goodCone = (boundingRectContArea < 0.7) and (boundingRectContArea > 0.35)
+    if goodCone:
+        print("cntArea " + str(cntArea) + " IMGWIDTH " + str(image_width) + " BOUNDING rect cont area " + str(boundingRectContArea) + str(goodCone))
+    return goodCone

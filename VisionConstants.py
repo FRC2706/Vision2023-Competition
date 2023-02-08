@@ -45,8 +45,8 @@ V_FOCAL_LENGTH = image_height / (2 * math.tan((verticalView / 2)))
 #      image_width is the image width in pixels (Example 640)
 #      image_height is the image width in pixels (Example 480)
 #      Image width and image height are otherwise known as the resolution
-def calculateFocalLengthsFromInput(cameraFOV, image_width, image_height):
-    diagonalView = math.radians(cameraFOV)
+def calculateFocalLengthsFromInput(image_width, image_height):
+    diagonalView = math.radians(68.5)
 
     #To calculate the aspect ratio, first find the greatest common divisor between the
     #image height and image width of the camera
@@ -74,13 +74,13 @@ def calculateFocalLengthsFromInput(cameraFOV, image_width, image_height):
 
 
 #CARGO_HEIGHT is actual height (for cargo height in feet)   
-CARGO_BALL_HEIGHT = 0.791667
+CONE_HEIGHT = 1.06770833333
 
 #image height is the y resolution calculated from image size
 #223 is the pixel height of a a ball found at a measured distance (which is 4 feet away)
 #65 is the pixel height of a scale image 6 feet away
-KNOWN_CARGO_PIXEL_HEIGHT = 223
-KNOWN_CARGO_DISTANCE = 4
+KNOWN_CONE_PIXEL_HEIGHT = 155
+KNOWN_CONE_DISTANCE = 4
 
 # Focal Length calculations: https://docs.google.com/presentation/d/1ediRsI-oR3-kwawFJZ34_ZTlQS2SDBLjZasjzZ-eXbQ/pub?start=false&loop=false&slide=id.g12c083cffa_0_165
 # H_FOCAL_LENGTH = image_width / (2 * math.tan((horizontalView / 2)))

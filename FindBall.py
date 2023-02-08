@@ -43,7 +43,7 @@ def findCargo(frame, cameraFOV, mask, MergeVisionPipeLineTableName):
     # Shows the contours overlayed on the original video
     return image
 
-def findCone(contours, image, centerX, centerY, MergeVisionPipeLineTableName,cameraFOV):
+def findBall(contours, image, centerX, centerY, MergeVisionPipeLineTableName,cameraFOV):
     screenHeight, screenWidth, channels = image.shape
     # Seen vision targets (correct angle, adjacent to each other)
     #cargo = []
@@ -183,7 +183,7 @@ def findCone(contours, image, centerX, centerY, MergeVisionPipeLineTableName,cam
         return image
 
 # Checks if ball contours are worthy based off of contour area and (not currently) hull area
-def checkCone(cntArea, image_width,boundingRectContArea):
+def checkball(cntArea, image_width,boundingRectContArea):
     #this checks that the area of the contour is greater than the image width divide by 2
     #It also checks the percentage of the area of the bounding rectangle is
     #greater than 69%.  

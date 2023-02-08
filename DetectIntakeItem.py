@@ -25,9 +25,9 @@ def DetectIntakeItem(frame, MergeVisionPipeLineTableName):
 
     # Copies frame and stores it in image
     image = frame.copy()
-    cv2.rectangle(image,(0,0),(x,screenHeight),(black),-1)
-    cv2.rectangle(image,(x,0),(x+w,y),(black),-1)
-    cv2.rectangle(image,(x+w,0),(screenWidth,screenHeight),(black),-1)
+    #cv2.rectangle(image,(0,0),(x,screenHeight),(black),-1)
+    #cv2.rectangle(image,(x,0),(x+w,y),(black),-1)
+    #cv2.rectangle(image,(x+w,0),(screenWidth,screenHeight),(black),-1)
 
     #Create a yellow mask
     MaskYellow = threshold_video(lower_yellow, upper_yellow, image)
@@ -73,12 +73,9 @@ def FindRectFillAmount(image,contours,x,y,w,h):
         cntsArea = 0
         for cnt in contours:
             cntx, cnty, cntw, cnth = cv2.boundingRect(cnt)
+            print("cnth: " + str(cnth))
+            
             cv2.drawContours(image, [cnt], 0, green, 2)
-            #find and draw center of cnt
-            M = cv2.moments(cnt)
-            cntx = int(M["m10"] / M["m00"])
-            cnty = int(M["m01"] / M["m00"])
-            cv2.circle(image, (cntx, cnty), 7, (255, 255, 255), -1)
             # Calculate Contour area
             cntsArea += cv2.contourArea(cnt)
             print("Area of contour: " + str(cntsArea))

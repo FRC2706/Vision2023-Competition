@@ -43,7 +43,7 @@ def findCargo(frame, cameraFOV, mask, MergeVisionPipeLineTableName):
     # Shows the contours overlayed on the original video
     return image
 
-def findCone(contours, image, centerX, centerY, MergeVisionPipeLineTableName,cameraFOV):
+def findCubes(contours, image, centerX, centerY, MergeVisionPipeLineTableName,cameraFOV):
     screenHeight, screenWidth, channels = image.shape
     # Seen vision targets (correct angle, adjacent to each other)
     #cargo = []

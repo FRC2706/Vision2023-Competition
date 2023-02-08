@@ -29,6 +29,7 @@ from threading import Thread
 # Imports EVERYTHING from these files
 from FindBall import *
 from DetectIntakeItem import *
+from FindCone import findCone
 from FindTarget import *
 from VisionConstants import *
 from VisionUtilities import *
@@ -98,7 +99,7 @@ else:  # implies images are to be read
    
 
     # Outer Target Images
-    images, imagename = load_images_from_folder("./2023VisionSampleImages/AprilTags")
+    images, imagename = load_images_from_folder("./2023VisionSampleImages/ConeCube")
     #images, imagename = load_images_from_folder("./HubImgSketchup")
 
 
@@ -172,9 +173,10 @@ while stayInLoop or cap.isOpened():
             processed, TargetPixelFromCenter, YawToTarget, distance = findTargets(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
     
         if GamePiece:
-                processed, displayMask,_,_ = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
+                #processed, displayMask,_,_ = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
                 #show the mask
-                cv2.imshow("mask", displayMask)
+                #cv2.imshow("mask", displayMask)
+                processed,_ = findCone(frame, MergeVisionPipeLineTableName)
 
            
 
