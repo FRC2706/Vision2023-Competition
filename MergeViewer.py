@@ -101,7 +101,7 @@ else:  # implies images are to be read
    
 
     # Outer Target Images
-    images, imagename = load_images_from_folder("./2023VisionSampleImages/ConeCube")
+    images, imagename = load_images_from_folder("./2023VisionSampleImages/Colours")
     #images, imagename = load_images_from_folder("./HubImgSketchup")
 
 
@@ -178,8 +178,8 @@ while stayInLoop or cap.isOpened():
                 #processed, displayMask,_,_ = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
                 #show the mask
                 #cv2.imshow("mask", displayMask)
-                processed,_ = findCone(frame, MergeVisionPipeLineTableName)
-                #processed = findColourRange(frame)
+                #processed,_ = findCone(frame, MergeVisionPipeLineTableName)
+                processed = findColourRange(frame)
 
            
 
