@@ -21,26 +21,26 @@ except ImportError:
 # MergeVisionPipeLineTableName is the Network Table destination for yaw and distance
 
 # Finds the balls from the masked image and displays them on original stream + network tables
-def findCone(frame, MergeVisionPipeLineTableName):
+def findCube(frame, MergeVisionPipeLineTableName):
     # Copies frame and stores it in image
     image = frame.copy()
-    #Create a yellow mask
-    MaskYellow = threshold_video(lower_yellow, upper_yellow, image)
+    #Create a purple mask
+    MaskPurple = threshold_video(lower_purple, upper_purple, image)
     #find the contours of the mask 
     if is_cv3():
-        _, contours, _ = cv2.findContours(MaskYellow, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
+        _, contours, _ = cv2.findContours(MaskPurple, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
     else:
-        contours, _ = cv2.findContours(MaskYellow, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
+        contours, _ = cv2.findContours(MaskPurple, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
 
-    Yaw = 0
     
+    Yaw = 0
     # Processes the contours, takes in (contours, output_image, (centerOfImage)
     if len(contours) != 0:
-        image,Yaw = findCones(contours, image)
+        image,Yaw = findCubes(contours, image)
     # Shows the contours overlayed on the original video
     return image, Yaw
 
-def findCones(contours, image):
+def findCubes(contours, image):
     screenHeight, screenWidth, channels = image.shape
     # Gets center of width
     centerX = (screenWidth / 2) - .5
@@ -48,7 +48,7 @@ def findCones(contours, image):
         # Sort contours by area size (biggest to smallest)
     cntsSorted = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)[:5]#what is this 5?
     cntHeight = 0
-    biggestCone = []
+    BiggestCube = []
     
     for cnt in cntsSorted:
         
@@ -62,7 +62,7 @@ def findCones(contours, image):
         cntArea = cv2.contourArea(cnt)
         print("Area of contour: " + str(cntArea))
         #calculate area of a cone standing up at that size
-        expectedArea = (w*h/2)
+        expectedArea = (w*h/1.5)
         print("expected area: " + str(expectedArea))
 
         #percentage of contour in bounding rect
@@ -70,7 +70,7 @@ def findCones(contours, image):
         #print("Percentage contour area in bounding rect: " + str(boundingRectContArea))
         #percentage of contour in area of a cone standing up at that size
         expectedAreaContArea = float(cntArea/expectedArea)
-        print("percentage of contour in area of a cone standing up at that size: " + str(expectedAreaContArea))
+        print("percentage of contour in area of a Cube at that size: " + str(expectedAreaContArea))
 
         #find the height of the bottom (y position of contour)
         # which is just the y value plus the height
@@ -79,7 +79,7 @@ def findCones(contours, image):
         M = cv2.moments(cnt)
 
         # Filters contours based off of size
-        if (checkCone(cntArea, expectedAreaContArea)):
+        if (checkCube(cntArea, image_width, boundingRectContArea)):
             ### MOSTLY DRAWING CODE, BUT CALCULATES IMPORTANT INFO ###
             # Gets the centeroids of contour
             if M["m00"] != 0:
@@ -87,7 +87,7 @@ def findCones(contours, image):
                 cy = int(M["m01"] / M["m00"])
             else:
                 cx, cy = 0, 0
-            if (len(biggestCone) < 3):
+            if (len(BiggestCube) < 3):
 
                 ##### DRAWS CONTOUR######
                 # Gets rotated bounding rectangle of contour
@@ -107,14 +107,14 @@ def findCones(contours, image):
                 cv2.rectangle(image, (x, y), (x + w, y + h), red, 1)
                    
                 # Appends important info to array
-                if [cx, cy, cnt, bottomHeight] not in biggestCone:
-                    biggestCone.append([cx, cy, cnt, bottomHeight, cntHeight])
+                if [cx, cy, cnt, bottomHeight] not in BiggestCube:
+                    BiggestCube.append([cx, cy, cnt, bottomHeight, cntHeight])
                     
 
         # Check if there are Cone seen
-        if (len(biggestCone) > 0):
+        if (len(BiggestCube) > 0):
             # copy
-            tallestCone = biggestCone
+            tallestCone = BiggestCube
 
             # pushes that it sees Cone to network tables
 
@@ -184,7 +184,8 @@ def findCones(contours, image):
         return image, finalTarget[2]
 
 # Checks if cone contours are worthy based off of contour area and (not currently) hull area
-def checkCone(cntArea, expectedAreaContArea):
-    goodCone = (expectedAreaContArea < 1.6) and (expectedAreaContArea > 0.85)
-    print("cntArea " + str(cntArea) + " BOUNDING rect cont area " + str(expectedAreaContArea) + str(goodCone))
+def checkCube(cntArea, image_width,boundingRectContArea):
+    goodCone = (boundingRectContArea < 0.7) and (boundingRectContArea > 0.35)
+    if goodCone:
+        print("cntArea " + str(cntArea) + " IMGWIDTH " + str(image_width) + " BOUNDING rect cont area " + str(boundingRectContArea) + str(goodCone))
     return goodCone

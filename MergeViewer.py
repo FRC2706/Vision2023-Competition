@@ -29,7 +29,9 @@ from threading import Thread
 # Imports EVERYTHING from these files
 from FindBall import *
 from DetectIntakeItem import *
+from FindColourRange import findColourRange
 from FindCone import findCone
+from FindCube import findCube
 from FindTarget import *
 from VisionConstants import *
 from VisionUtilities import *
@@ -177,6 +179,7 @@ while stayInLoop or cap.isOpened():
                 #show the mask
                 #cv2.imshow("mask", displayMask)
                 processed,_ = findCone(frame, MergeVisionPipeLineTableName)
+                #processed = findColourRange(frame)
 
            
 
