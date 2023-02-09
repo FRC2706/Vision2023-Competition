@@ -28,7 +28,8 @@ from threading import Thread
 
 # Imports EVERYTHING from these files
 from FindBall import *
-from FindTarget import *
+from FindTape import *
+from FindAprilTag import *
 from VisionConstants import *
 from VisionUtilities import *
 from VisionMasking import *
@@ -55,9 +56,7 @@ webCamNumber = 1
 # ADJUST DESIRED TARGET BASED ON VIDEO OR FILES ABOVE !!!
 Driver = True
 Tape = False
-Cargo = False
-Red = True 
-Blue = False
+AprilTag = True
 CameraFOV = 68.5
 CameraTiltAngle = 30
 OverlayScaleFactor = 1
@@ -94,12 +93,10 @@ elif useWebCam: #test against live camera
     showAverageFPS = True
 
 else:  # implies images are to be read
-    # Cargo Images
-    #mages, imagename = load_images_from_folder("./HighCamAngleDown")
-   
 
     # Outer Target Images
-    images, imagename = load_images_from_folder("2023VisionSampleImages/RetroTape\.")
+    # 2023VisionSampleImages/RetroTape\.
+    images, imagename = load_images_from_folder("VisionImages./")
     #images, imagename = load_images_from_folder("./HubImgSketchup")
 
 
@@ -172,14 +169,8 @@ while stayInLoop or cap.isOpened():
             threshold = threshold_video(lower_green, upper_green, frame)
             processed, TargetPixelFromCenter, YawToTarget, distance = findTargets(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
     
-        if Cargo:
-            if Red:
-                boxBlur = blurImg(frame, red_blur)
-                threshold = threshold_video(lower_red, upper_red, boxBlur)
-            elif Blue:
-                boxBlur = blurImg(frame, blue_blur)
-                threshold = threshold_video(lower_blue, upper_blue, boxBlur)
-            processed = findCargo(frame, CameraFOV, threshold, MergeVisionPipeLineTableName)
+        if AprilTag:
+            processed = findAprilTagCorner(frame, CameraFOV, threshold, MergeVisionPipeLineTableName)
 
            
 

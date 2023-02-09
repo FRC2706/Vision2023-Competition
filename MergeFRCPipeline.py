@@ -27,7 +27,8 @@ import math
 
 # Imports EVERYTHING from these files
 from FindBall import *
-from FindTarget import *
+from FindAprilTag import *
+from FindTape import *
 from VisionConstants import *
 from VisionUtilities import *
 from VisionMasking import *
@@ -43,7 +44,7 @@ print()
 import datetime
 
 # class that runs separate thread for showing video,
-class VideoShow:
+class VideoShow():
     """
     Class that continuously shows a frame using a dedicated thread.
     """
@@ -71,7 +72,7 @@ class VideoShow:
 
 
 # Class that runs a separate thread for reading  camera server also controlling exposure.
-class WebcamVideoStream:
+class WebcamVideoStream():
     def __init__(self, camera, cameraServer, frameWidth, frameHeight, name="WebcamVideoStream"):
         # initialize the video camera stream and read the first frame
         # from the stream
@@ -83,7 +84,7 @@ class WebcamVideoStream:
         self.autoExpose = True
         self.prevValue = True
 
-        self.switchBall = False
+        self.switchAprilTag = False
         self.switchTape = False
         
         # Make a blank image to write on
@@ -501,6 +502,14 @@ if __name__ == "__main__":
                 if rpm != 0:
                     cv2.putText(processed, "RPM: " + str(round(rpm,2)), (20, 340), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
 
+        if networkTableVisionPipeline.getBoolean("AprilTag", True):
+            switch = 1
+            TargetPixelFromCenter = networkTableVisionReadPipeline.getNumber("TargetPixelFromCenter", -99)
+            yaw = networkTableVisionReadPipeline.getNumber("YawToAprilTag", -99)
+            distance = networkTableVisionReadPipeline.getNumber("DistanceToAprilTag", -1)
+            tag_id = networkTableVisionReadPipeline.getNumber("TagID", -1)
+            
+           
         if (networkTableVisionPipeline.getBoolean("Driver", True)):
             switch = 1
             
@@ -530,22 +539,7 @@ if __name__ == "__main__":
                 processed = threshold
             else:   
                 processed = findCargo(frame, CameraFOV, threshold, MergeVisionPipeLineTableName)
-        '''
-        #
-        if (networkTableVisionPipeline.getBoolean("AprilTags", True)):
-            switch = 3
-            #Method = int(networkTableVisionPipeline.getNumber("Method", 7))
-            # threshold = threshold_video(lower_green, upper_green, frame)
-            if (networkTableVisionPipeline.getBoolean("SendMask", False)):
-                processed = threshold
-            else:
-                processed, final_center, YawToTarget, distance = findTargets(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
-                #Read RPM From Network Table
-                rpm = networkTableVisionPipeline.getNumber("RPM", 0)
-                if rpm != 0:
-                    cv2.putText(processed, "RPM: " + str(round(rpm,2)), (20, 340), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
-
-        #                          
+        '''                    
 
         # Puts timestamp of camera on network tables
         networkTableVisionPipeline.putNumber("VideoTimestamp", timestamp)
