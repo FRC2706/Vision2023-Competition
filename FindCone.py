@@ -28,6 +28,7 @@ def findCone(frame, MergeVisionPipeLineTableName):
     MaskYellow = threshold_video(lower_yellow, upper_yellow, image)
     #find the contours of the mask 
     if is_cv3():
+        print("is_cv3")
         _, contours, _ = cv2.findContours(MaskYellow, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
     else:
         contours, _ = cv2.findContours(MaskYellow, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
@@ -35,18 +36,30 @@ def findCone(frame, MergeVisionPipeLineTableName):
     Yaw = 0
     
     # Processes the contours, takes in (contours, output_image, (centerOfImage)
-    if len(contours) != 0:
-        image,Yaw = findCones(contours, image)
+    if len(contours) != 0:    
+        # Sort contours by area size (biggest to smallest)
+        cntsSorted = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)[:5]#what is this 5?
+        image,Yaw = findCones(cntsSorted, image)
     # Shows the contours overlayed on the original video
     return image, Yaw
 
-def findCones(contours, image):
-    screenHeight, screenWidth, channels = image.shape
+def splitContours(Mask,severity):
+    if is_cv3():
+        print("is_cv3")
+        _, contours, _ = cv2.findContours(Mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
+    else:
+        contours, _ = cv2.findContours(Mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
+    for cnt in contours:
+        cv2.boundingRect(cnt)
+
+    return Mask
+
+
+def findCones(cntsSorted, image):
+    screenHeight, screenWidth, _ = image.shape
     # Gets center of width
     centerX = (screenWidth / 2) - .5
 
-        # Sort contours by area size (biggest to smallest)
-    cntsSorted = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)[:5]#what is this 5?
     cntHeight = 0
     biggestCone = []
     
@@ -56,7 +69,6 @@ def findCones(contours, image):
 
         x, y, w, h = cv2.boundingRect(cnt)
 
-        boundingRectArea = w*h
         ##print("Area of bounding rec: " + str(boundingRectArea))
         # Calculate Contour area
         cntArea = cv2.contourArea(cnt)
@@ -64,10 +76,6 @@ def findCones(contours, image):
         #calculate area of a cone standing up at that size
         expectedArea = (w*h/2)
         print("expected area: " + str(expectedArea))
-
-        #percentage of contour in bounding rect
-        boundingRectContArea = float(cntArea/boundingRectArea)
-        #print("Percentage contour area in bounding rect: " + str(boundingRectContArea))
         #percentage of contour in area of a cone standing up at that size
         expectedAreaContArea = float(cntArea/expectedArea)
         print("percentage of contour in area of a cone standing up at that size: " + str(expectedAreaContArea))
@@ -185,6 +193,6 @@ def findCones(contours, image):
 
 # Checks if cone contours are worthy based off of contour area and (not currently) hull area
 def checkCone(cntArea, expectedAreaContArea):
-    goodCone = (expectedAreaContArea < 1.6) and (expectedAreaContArea > 0.85)
-    print("cntArea " + str(cntArea) + " BOUNDING rect cont area " + str(expectedAreaContArea) + str(goodCone))
+    goodCone = (expectedAreaContArea < 1.6) and (expectedAreaContArea > 0.8)
+    print(str(goodCone))
     return goodCone

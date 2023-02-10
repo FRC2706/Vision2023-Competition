@@ -108,5 +108,9 @@ def findColourRange(frame):
             contours, _ = cv2.findContours(tempMask, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
     print("vUpper"+str(vUpper))
     
+
+    print("lower_colour = np.array(["+str(hLower-10)+","+str(sLower-10)+","+str(vLower-10)+"])")
+    print("upper_colour = np.array(["+str(hUpper+10)+","+str(sUpper+10)+","+str(vUpper+10)+"])")
+
     return image
 

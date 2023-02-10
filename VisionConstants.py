@@ -112,8 +112,8 @@ upper_green = np.array([94, 255, 255])
 #upper_green = np.array([85, 255, 255])
 
 
-lower_yellow = np.array([5, 165, 165]) #10, 100, 100
-upper_yellow = np.array([30, 255, 255]) #was 30, 255, 255
+lower_yellow = np.array([4,181,181])
+upper_yellow = np.array([29,255,255])
 
 # masks for red and blue cargo (HSV)
 lower_red = np.array([138,106,123])
@@ -125,7 +125,7 @@ upper_blue = np.array([115,213,255])
 lower_white = np.array([240,240,240])
 upper_white = np.array([255,255,255])
 
-lower_purple = np.array([100, 85, 65])
-upper_purple = np.array([255, 190, 180])
+lower_purple = np.array([99,2,49])
+upper_purple = np.array([182,196,213])
 
 blingColour = 0
