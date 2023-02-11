@@ -26,21 +26,19 @@ def findCone(frame, MergeVisionPipeLineTableName):
     image = frame.copy()
     #Create a yellow mask
     MaskYellow = threshold_video(lower_yellow, upper_yellow, image)
+    
+    kernel = np.ones((15,5), np.uint8)
+    # Using cv2.erode() method 
+    MaskYellow = cv2.erode(MaskYellow, kernel)
+
     #find the contours of the mask 
     if is_cv3():
         print("is_cv3")
         _, contours, _ = cv2.findContours(MaskYellow, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
     else:
         contours, _ = cv2.findContours(MaskYellow, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
-
+    
     Yaw = 0
-    
-
-    kernel = np.ones((5, 5), np.uint8)
-  
-    # Using cv2.erode() method 
-    image = cv2.erode(MaskYellow, kernel)
-    
     # Processes the contours, takes in (contours, output_image, (centerOfImage)
     if len(contours) != 0:    
         # Sort contours by area size (biggest to smallest)
@@ -48,18 +46,6 @@ def findCone(frame, MergeVisionPipeLineTableName):
         image,Yaw = findCones(cntsSorted, image)
     # Shows the contours overlayed on the original video
     return image, Yaw
-
-def splitContours(Mask,severity):
-    if is_cv3():
-        print("is_cv3")
-        _, contours, _ = cv2.findContours(Mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
-    else:
-        contours, _ = cv2.findContours(Mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
-    for cnt in contours:
-        cv2.boundingRect(cnt)
-
-    return Mask
-
 
 def findCones(cntsSorted, image):
     screenHeight, screenWidth, _ = image.shape
