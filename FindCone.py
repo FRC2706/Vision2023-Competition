@@ -35,6 +35,12 @@ def findCone(frame, MergeVisionPipeLineTableName):
 
     Yaw = 0
     
+
+    kernel = np.ones((5, 5), np.uint8)
+  
+    # Using cv2.erode() method 
+    image = cv2.erode(MaskYellow, kernel)
+    
     # Processes the contours, takes in (contours, output_image, (centerOfImage)
     if len(contours) != 0:    
         # Sort contours by area size (biggest to smallest)
