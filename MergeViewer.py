@@ -175,10 +175,11 @@ while stayInLoop or cap.isOpened():
             processed, TargetPixelFromCenter, YawToTarget, distance = findTargets(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
     
         if GamePiece:
-                #processed, displayMask,_,_ = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
+                processed, displayMask,_,_ = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
                 #show the mask
                 #cv2.imshow("mask", displayMask)
-                processed,_ = findCone(frame, MergeVisionPipeLineTableName)
+                #processed,_ = findCone(frame, MergeVisionPipeLineTableName)
+                #processed,_ = findCube(frame, MergeVisionPipeLineTableName)
                 #processed = findColourRange(frame)
 
            
