@@ -26,10 +26,13 @@ def findCone(frame, MergeVisionPipeLineTableName):
     image = frame.copy()
     #Create a yellow mask
     MaskYellow = threshold_video(lower_yellow, upper_yellow, image)
-    
-    kernel = np.ones((15,5), np.uint8)
+    cv2.imshow("Mask", MaskYellow)
+    kernel = np.ones((10,3), np.uint8)
     # Using cv2.erode() method 
     MaskYellow = cv2.erode(MaskYellow, kernel)
+    MaskYellow = cv2.erode(MaskYellow, kernel)
+    MaskYellow = cv2.erode(MaskYellow, kernel)
+    cv2.imshow("Eroded", MaskYellow)
 
     #find the contours of the mask 
     if is_cv3():
