@@ -19,11 +19,12 @@ import random
 
 from cscore import CameraServer, VideoSource
 from ntcore import NetworkTableInstance
-# from networktables import NetworkTablesInstance
+# from ntcore import NetworkTableInstance
 import cv2
 import numpy as np
-from networktables import NetworkTables
-from networktables.util import ntproperty
+#from ntcore import NetworkTable
+from ntcore import NetworkTable
+#from ntcore.util import ntproperty
 import math
 
 # Imports EVERYTHING from these files
@@ -348,22 +349,22 @@ if __name__ == "__main__":
     if not readConfig():
         sys.exit(1)
 
-    # start NetworkTables
-    ntinst = NetworkTablesInstance.getDefault()
+    # start NetworkTable
+    ntinst = NetworkTableInstance.getDefault()
     # Name of network table - this is how it communicates with robot. IMPORTANT
-    networkTableMatch = NetworkTables.getTable("FMSInfo")
-    networkTableTime = NetworkTables.getTable("SmartDashboard")
-    networkTableMatchVariables = NetworkTables.getTable("VisionControl")
+    networkTableMatch = NetworkTable.getTable("FMSInfo")
+    networkTableTime = NetworkTable.getTable("SmartDashboard")
+    networkTableMatchVariables = NetworkTable.getTable("VisionControl")
 
-    networkTableBling = NetworkTables.getTable("blingTable")
+    networkTableBling = NetworkTable.getTable("blingTable")
     
 
 
     #Used to control MergeVisionPipeLineSettings
-    networkTableVisionPipeline = NetworkTables.getTable(MergeVisionPipeLineTableName)
+    networkTableVisionPipeline = NetworkTable.getTable(MergeVisionPipeLineTableName)
 
     #NetworkTable to read from if needed
-    networkTableVisionReadPipeline = NetworkTables.getTable(MergeVisionReadPipeLineTableName)
+    networkTableVisionReadPipeline = NetworkTable.getTable(MergeVisionReadPipeLineTableName)
 
 
     if server:

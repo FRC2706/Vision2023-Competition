@@ -4,8 +4,8 @@ import math
 from VisionUtilities import * 
 from VisionConstants import *
 from DistanceFunctions import *
-from networktables import NetworkTablesInstance
-from networktables.util import ntproperty
+from ntcore import NetworkTableInstance
+#from ntcore.util import ntproperty
 
 try:
     from PrintPublisher import *
@@ -48,6 +48,7 @@ def findCone(frame, MergeVisionPipeLineTableName):
         cntsSorted = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)[:5]#what is this 5?
         image,Yaw = findCones(cntsSorted, image)
     # Shows the contours overlayed on the original video
+        publishNumber(MergeVisionPipeLineTableName, "YawToCone", Yaw)
     return image, Yaw
 
 def findCones(cntsSorted, image):
@@ -172,13 +173,10 @@ def findCones(cntsSorted, image):
                         white)
             cv2.line(image, (xCoord, screenHeight), (xCoord, 0), blue, 2)
 
-            cv2.putText(image, "cxYaw (Used): " + str(finalTarget[2]), (40, 250), cv2.FONT_HERSHEY_COMPLEX, .6,
+            cv2.putText(image, "cxYaw (Used): " + str(finalTarget[2]), (40, 225), cv2.FONT_HERSHEY_COMPLEX, .6,
                         white)
 
-            # pushes Cone angle to network tables
-            #publishNumber(MergeVisionPipeLineTableName, "YawToCone", finalTarget[0])
-            #publishNumber(MergeVisionPipeLineTableName, "DistanceToCone", finalTarget[1])
-            #publishNumber(MergeVisionPipeLineTableName, "ConeCentroid1Yaw", finalTarget[2])
+
         else:
             finalTarget = [0,0,0]
 

@@ -27,9 +27,9 @@ To install number python (more math operatios)
 To install open CV
  - pip install opencv-python
 
-To get networktables (To talk to our robot)
+To get networktable (To talk to our robot)
  - pip install robotpy
- - pip install pynetworktables
+ - pip install pynetworktable
  
 To get apriltags (to detect Apriltags)
  - pip install pupil-apriltags

@@ -27,7 +27,6 @@ import numpy as np
 from threading import Thread
 
 # Imports EVERYTHING from these files
-from FindBall import *
 from DetectIntakeItem import *
 from FindColourRange import findColourRange
 from FindCone import findCone
