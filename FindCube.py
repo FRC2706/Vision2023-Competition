@@ -165,11 +165,11 @@ def findCubes(contours, image):
             # Puts the yaw on screen
             # Draws yaw of target + line where center of target is
             #finalYaw = round(finalTarget[1]*1000)/1000
-            cv2.putText(image, "Yaw: " + str(finalTarget[0]), (40, 200), cv2.FONT_HERSHEY_COMPLEX, .6,
+            cv2.putText(image, "Yaw: " + str(finalTarget[0]), (40, 150), cv2.FONT_HERSHEY_COMPLEX, .6,
                         white)
             cv2.line(image, (xCoord, screenHeight), (xCoord, 0), blue, 2)
 
-            cv2.putText(image, "cxYaw (Used): " + str(finalTarget[2]), (40, 250), cv2.FONT_HERSHEY_COMPLEX, .6,
+            cv2.putText(image, "cxYaw (Used): " + str(finalTarget[2]), (40, 175), cv2.FONT_HERSHEY_COMPLEX, .6,
                         white)
 
             # pushes Cone angle to network tables
