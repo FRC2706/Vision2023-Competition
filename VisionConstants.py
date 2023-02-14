@@ -45,8 +45,8 @@ V_FOCAL_LENGTH = image_height / (2 * math.tan((verticalView / 2)))
 #      image_width is the image width in pixels (Example 640)
 #      image_height is the image width in pixels (Example 480)
 #      Image width and image height are otherwise known as the resolution
-def calculateFocalLengthsFromInput(cameraFOV, image_width, image_height):
-    diagonalView = math.radians(cameraFOV)
+def calculateFocalLengthsFromInput(image_width, image_height):
+    diagonalView = math.radians(68.5)
 
     #To calculate the aspect ratio, first find the greatest common divisor between the
     #image height and image width of the camera
@@ -74,13 +74,13 @@ def calculateFocalLengthsFromInput(cameraFOV, image_width, image_height):
 
 
 #CARGO_HEIGHT is actual height (for cargo height in feet)   
-CARGO_BALL_HEIGHT = 0.791667
+CONE_HEIGHT = 1.06770833333
 
 #image height is the y resolution calculated from image size
 #223 is the pixel height of a a ball found at a measured distance (which is 4 feet away)
 #65 is the pixel height of a scale image 6 feet away
-KNOWN_CARGO_PIXEL_HEIGHT = 223
-KNOWN_CARGO_DISTANCE = 4
+KNOWN_CONE_PIXEL_HEIGHT = 155
+KNOWN_CONE_DISTANCE = 4
 
 # Focal Length calculations: https://docs.google.com/presentation/d/1ediRsI-oR3-kwawFJZ34_ZTlQS2SDBLjZasjzZ-eXbQ/pub?start=false&loop=false&slide=id.g12c083cffa_0_165
 # H_FOCAL_LENGTH = image_width / (2 * math.tan((horizontalView / 2)))
@@ -93,7 +93,7 @@ red_blur = 1
 blue_blur = 1
 
 # define colors
-purple = (165, 0, 120)
+purple = (255, 255, 0)
 blue = (255, 0, 0)
 green = (0, 255, 0)
 red = (0, 0, 255)
@@ -101,6 +101,7 @@ cyan = (252, 252, 3)
 white = (255, 255, 255)
 yellow = (0, 255, 255)
 orange = (60, 255, 255)
+black = (0,0,0)
 
 # define range of green of retroreflective tape in HSV
 lower_green = np.array([55, 85, 146])
@@ -110,8 +111,9 @@ upper_green = np.array([94, 255, 255])
 #lower_green = np.array([23, 50, 35])
 #upper_green = np.array([85, 255, 255])
 
-lower_yellow = np.array([10, 150, 65]) # was 14, 150, 150
-upper_yellow = np.array([30, 255, 255])
+
+lower_yellow = np.array([5,67,80])
+upper_yellow = np.array([30,260,245])
 
 # masks for red and blue cargo (HSV)
 lower_red = np.array([138,106,123])
@@ -119,5 +121,11 @@ upper_red = np.array([180,255,255])
 
 lower_blue = np.array([64,127,116]) 
 upper_blue = np.array([115,213,255]) 
+
+lower_white = np.array([240,240,240])
+upper_white = np.array([255,255,255])
+
+lower_purple = np.array([99,2,49])
+upper_purple = np.array([182,196,213])
 
 blingColour = 0

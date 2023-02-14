@@ -27,7 +27,10 @@ import numpy as np
 from threading import Thread
 
 # Imports EVERYTHING from these files
-from FindBall import *
+from DetectIntakeItem import *
+from FindColourRange import findColourRange
+from FindCone import findCone
+from FindCube import findCube
 from FindTarget import *
 from VisionConstants import *
 from VisionUtilities import *
@@ -53,11 +56,9 @@ useWebCam = False
 webCamNumber = 1
 
 # ADJUST DESIRED TARGET BASED ON VIDEO OR FILES ABOVE !!!
-Driver = True
+Driver = False
 Tape = False
-Cargo = False
-Red = True 
-Blue = False
+GamePiece = True
 CameraFOV = 68.5
 CameraTiltAngle = 30
 OverlayScaleFactor = 1
@@ -99,13 +100,13 @@ else:  # implies images are to be read
    
 
     # Outer Target Images
-    images, imagename = load_images_from_folder("./HubImgFRC")
+    images, imagename = load_images_from_folder("./2023VisionSampleImages/ConeCube")
     #images, imagename = load_images_from_folder("./HubImgSketchup")
 
 
     # finds height/width of camera frame (eg. 640 width, 480 height)
     image_height, image_width = images[0].shape[:2]
-    #print(image_height, image_width)
+    print(image_height, image_width)
 
 team = 2706
 server = True
@@ -117,7 +118,7 @@ if useVideo and not useWebCam:
 
 elif useWebCam:
     # src defines which camera, assume 2nd camera or src=1
-    vs = WebcamVideoStream(src=webCamNumber).start()
+    vs = cv2.VideoCapture(webCamNumber + cv2.CAP_DSHOW)
 
 else:
     currentImg = 0
@@ -172,14 +173,13 @@ while stayInLoop or cap.isOpened():
             threshold = threshold_video(lower_green, upper_green, frame)
             processed, TargetPixelFromCenter, YawToTarget, distance = findTargets(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
     
-        if Cargo:
-            if Red:
-                boxBlur = blurImg(frame, red_blur)
-                threshold = threshold_video(lower_red, upper_red, boxBlur)
-            elif Blue:
-                boxBlur = blurImg(frame, blue_blur)
-                threshold = threshold_video(lower_blue, upper_blue, boxBlur)
-            processed = findCargo(frame, CameraFOV, threshold, MergeVisionPipeLineTableName)
+        if GamePiece:
+                processed, displayMask,_,_ = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
+                #show the mask
+                #cv2.imshow("mask", displayMask)
+                #processed,_ = findCone(frame, MergeVisionPipeLineTableName)
+                #processed,_ = findCube(frame, MergeVisionPipeLineTableName)
+                #processed = findColourRange(frame)
 
            
 
@@ -234,7 +234,7 @@ while stayInLoop or cap.isOpened():
 
         print('you pressed this code->', key)
 
-        if key == 113 or key == 27: # this is the escape key
+        if key == 113 or key == 27: # this is the escape key and the q key
             stayInLoop = True
             break
         if key == 105 or key == 2490368: # this is the up arrow, and key 'i'

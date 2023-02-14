@@ -18,21 +18,27 @@ from threading import Thread
 import random
 
 from cscore import CameraServer, VideoSource
-from networktables import NetworkTablesInstance
+from ntcore import NetworkTableInstance
+# from ntcore import NetworkTableInstance
 import cv2
 import numpy as np
-from networktables import NetworkTables
-from networktables.util import ntproperty
+#from ntcore import NetworkTable
+from ntcore import NetworkTable
+#from ntcore.util import ntproperty
 import math
 
 # Imports EVERYTHING from these files
-from FindBall import *
+from FindCube import *
+from FindCone import *
+from DetectIntakeItem import *
 from FindTarget import *
 from VisionConstants import *
 from VisionUtilities import *
 from VisionMasking import *
 from DistanceFunctions import *
 from DriverOverlay import *
+from FindGamePiece import *
+from FindColourRange import *
 
 print("Using python version {0}".format(sys.version))
 print()
@@ -206,10 +212,8 @@ with open(pipelineConfig) as json_file:
 MergeVisionPipeLineTableName = data["networkTableName"]
 MergeVisionReadPipeLineTableName = data["networkTableReadName"]
 DriverEnabled = data["Driver"]
+Intake = data["Intake"]
 TapeEnabled = data["Tape"]
-CargoEnabled = data["Cargo"]
-RedEnabled = data["Red"]
-BlueEnabled = data["Blue"]
 OutputStream = data["OutputStream"]
 ExposureTape = data["ExposureTarget"]
 ExposureBall = data["ExposureBall"]
@@ -218,7 +222,7 @@ CameraTiltAngle = data["CameraTiltAngle"]
 OverlayScaleFactor = data["OverlayScaleFactor"]
 OutputStreamWidth = data["OutputStreamWidth"]
 OutputStreamHeight = data["OutputStreamHeight"]
-
+print (Intake)
 
 if DriverEnabled:
     switch = 1
@@ -226,7 +230,7 @@ if DriverEnabled:
 elif TapeEnabled:
     switch = 2
 
-elif CargoEnabled:
+elif Intake:
     switch = 3
 
 class CameraConfig: pass
@@ -345,22 +349,22 @@ if __name__ == "__main__":
     if not readConfig():
         sys.exit(1)
 
-    # start NetworkTables
-    ntinst = NetworkTablesInstance.getDefault()
+    # start NetworkTable
+    ntinst = NetworkTableInstance.getDefault()
     # Name of network table - this is how it communicates with robot. IMPORTANT
-    networkTableMatch = NetworkTables.getTable("FMSInfo")
-    networkTableTime = NetworkTables.getTable("SmartDashboard")
-    networkTableMatchVariables = NetworkTables.getTable("VisionControl")
+    networkTableMatch = ntinst.getTable("FMSInfo")
+    networkTableTime = ntinst.getTable("SmartDashboard")
+    networkTableMatchVariables = ntinst.getTable("VisionControl")
 
-    networkTableBling = NetworkTables.getTable("blingTable")
+    networkTableBling = ntinst.getTable("blingTable")
     
 
 
     #Used to control MergeVisionPipeLineSettings
-    networkTableVisionPipeline = NetworkTables.getTable(MergeVisionPipeLineTableName)
+    networkTableVisionPipeline = ntinst.getTable(MergeVisionPipeLineTableName)
 
     #NetworkTable to read from if needed
-    networkTableVisionReadPipeline = NetworkTables.getTable(MergeVisionReadPipeLineTableName)
+    networkTableVisionReadPipeline = ntinst.getTable(MergeVisionReadPipeLineTableName)
 
 
     if server:
@@ -368,7 +372,7 @@ if __name__ == "__main__":
         ntinst.startServer()
     else:
         #print("Setting up NetworkTables client for team {}".format(team))
-        ntinst.startClientTeam(team)
+        ntinst.setServerTeam(team) #was startClientTeam
 
     # start cameras
     cameras = []
@@ -400,9 +404,7 @@ if __name__ == "__main__":
     #PipeLine Table Values, Unique for Each PipeLine
     networkTableVisionPipeline.putBoolean("Driver", DriverEnabled)
     networkTableVisionPipeline.putBoolean("Tape", TapeEnabled)
-    networkTableVisionPipeline.putBoolean("Cargo", CargoEnabled)
-    networkTableVisionPipeline.putBoolean("Red", RedEnabled)
-    networkTableVisionPipeline.putBoolean("Blue", BlueEnabled)
+    networkTableVisionPipeline.putBoolean("Intake", Intake)
     #networkTable.putBoolean("ControlPanel", False)
     networkTableVisionPipeline.putBoolean("WriteImages", False)
     networkTableVisionPipeline.putBoolean("SendMask", False)
@@ -517,25 +519,10 @@ if __name__ == "__main__":
            
 
       
-        if (networkTableVisionPipeline.getBoolean("Cargo", True)):
-            # Checks if you just want to look for Cargo
-            switch = 3
-#               boxBlur = blurImg(frame, yellow_blur)
-#               threshold = threshold_video(lower_yellow, upper_yellow, boxBlur)
-            if (networkTableVisionPipeline.getBoolean("Red", True)):
-                boxBlur = blurImg(frame, red_blur)
-                threshold = threshold_video(lower_red, upper_red, boxBlur)
-                processed = findCargo(frame, CameraFOV, threshold, MergeVisionPipeLineTableName)
-            elif (networkTableVisionPipeline.getBoolean("Blue", True)):
-                boxBlur = blurImg(frame, blue_blur)
-                threshold = threshold_video(lower_blue, upper_blue, boxBlur)
-
-            if (networkTableVisionPipeline.getBoolean("SendMask", False)):
-                processed = threshold
-            else:   
-                processed = findCargo(frame, CameraFOV, threshold, MergeVisionPipeLineTableName)
-
-           
+        if (networkTableVisionPipeline.getBoolean("Intake", True)):
+            processed, _,_,_ = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
+            processed,_ = findCone(frame, MergeVisionPipeLineTableName)
+            processed,_ = findCube(frame, MergeVisionPipeLineTableName)
                           
 
         # Puts timestamp of camera on network tables

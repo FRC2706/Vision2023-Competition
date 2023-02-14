@@ -18,11 +18,11 @@ from threading import Thread
 import random
 
 from cscore import CameraServer, VideoSource
-from networktables import NetworkTablesInstance
+from ntcore import NetworkTableInstance
 import cv2
 import numpy as np
-from networktables import NetworkTables
-from networktables.util import ntproperty
+from ntcore import NetworkTable
+#from ntcore.util import ntproperty
 import math
 
 ########### SET RESOLUTION TO 256x144 !!!! ############
@@ -348,12 +348,12 @@ if __name__ == "__main__":
     if not readConfig():
         sys.exit(1)
 
-    # start NetworkTables
-    ntinst = NetworkTablesInstance.getDefault()
+    # start ntcore
+    ntinst = NetworkTableInstance.getDefault()
     # Name of network table - this is how it communicates with robot. IMPORTANT
-    networkTable = NetworkTables.getTable('MergeVision')
+    networkTable = NetworkTable.getTable('MergeVision')
 
-    networkTableMatch = NetworkTables.getTable("FMSInfo")
+    networkTableMatch = NetworkTable.getTable("FMSInfo")
 
     if server:
         print("Setting up NetworkTables server")
