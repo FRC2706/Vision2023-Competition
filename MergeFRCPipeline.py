@@ -352,19 +352,19 @@ if __name__ == "__main__":
     # start NetworkTable
     ntinst = NetworkTableInstance.getDefault()
     # Name of network table - this is how it communicates with robot. IMPORTANT
-    networkTableMatch = NetworkTable.getTable("FMSInfo")
-    networkTableTime = NetworkTable.getTable("SmartDashboard")
-    networkTableMatchVariables = NetworkTable.getTable("VisionControl")
+    networkTableMatch = ntinst.getTable("FMSInfo")
+    networkTableTime = ntinst.getTable("SmartDashboard")
+    networkTableMatchVariables = ntinst.getTable("VisionControl")
 
-    networkTableBling = NetworkTable.getTable("blingTable")
+    networkTableBling = ntinst.getTable("blingTable")
     
 
 
     #Used to control MergeVisionPipeLineSettings
-    networkTableVisionPipeline = NetworkTable.getTable(MergeVisionPipeLineTableName)
+    networkTableVisionPipeline = ntinst.getTable(MergeVisionPipeLineTableName)
 
     #NetworkTable to read from if needed
-    networkTableVisionReadPipeline = NetworkTable.getTable(MergeVisionReadPipeLineTableName)
+    networkTableVisionReadPipeline = ntinst.getTable(MergeVisionReadPipeLineTableName)
 
 
     if server:
@@ -372,7 +372,7 @@ if __name__ == "__main__":
         ntinst.startServer()
     else:
         #print("Setting up NetworkTables client for team {}".format(team))
-        ntinst.startClientTeam(team)
+        ntinst.setServerTeam(team) #was startClientTeam
 
     # start cameras
     cameras = []
