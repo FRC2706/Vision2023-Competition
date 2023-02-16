@@ -367,7 +367,9 @@ if __name__ == "__main__":
         ntinst.startServer()
     else:
         #print("Setting up NetworkTables client for team {}".format(team))
-        ntinst.startClientTeam(team)
+        #ntinst.startClientTeam(team)
+        ntinst.startClient("Merge Client")
+        ntinst.setServerTeam(team)
 
     # start cameras
     cameras = []
