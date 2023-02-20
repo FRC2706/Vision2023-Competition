@@ -23,17 +23,23 @@ import os
 import sys
 
 import numpy as np
+from imutils.video import WebcamVideoStream
 
 from threading import Thread
 
 # Imports EVERYTHING from these files
-from FindBall import *
-from FindTarget import *
+
+
 from VisionConstants import *
 from VisionUtilities import *
 from VisionMasking import *
 from DistanceFunctions import *
 from DriverOverlay import *
+from DetectIntakeItem import *
+from FindCube import *
+from FindCone import *
+from FindTape import *
+#from FindAprilTag import *
 
 print()
 print("--- Merge Viewer Starting ---")
@@ -53,11 +59,11 @@ useWebCam = False
 webCamNumber = 1
 
 # ADJUST DESIRED TARGET BASED ON VIDEO OR FILES ABOVE !!!
-Driver = True
-Tape = False
-Cargo = False
-Red = True 
-Blue = False
+Tape = True
+Cone = False
+Cube = False
+Intake = False
+AprilTag = False
 CameraFOV = 68.5
 CameraTiltAngle = 30
 OverlayScaleFactor = 1
@@ -72,6 +78,7 @@ def load_images_from_folder(folder):
     images = []
     imagename = []
     for filename in sorted(os.listdir(folder)):
+        #print(filename)
         img = cv2.imread(os.path.join(folder,filename))
         if img is not None:
             images.append(img)
@@ -94,13 +101,13 @@ elif useWebCam: #test against live camera
     showAverageFPS = True
 
 else:  # implies images are to be read
-    # Cargo Images
-    #mages, imagename = load_images_from_folder("./HighCamAngleDown")
-   
 
     # Outer Target Images
-    images, imagename = load_images_from_folder("./HubImgFRC")
+    #images, imagename = load_images_from_folder("./2023VisionSampleImages/RetroTape")
+    images, imagename = load_images_from_folder("/Users/johngray/FRC/Vision2023-Competition/2023VisionSampleImages/RetroTape")
+    #/Users/johngray/FRC/Vision2023-Competition/
     #images, imagename = load_images_from_folder("./HubImgSketchup")
+    print(imagename)
 
 
     # finds height/width of camera frame (eg. 640 width, 480 height)
@@ -160,26 +167,30 @@ while stayInLoop or cap.isOpened():
     else:
         frame = images[currentImg]
         filename = imagename[currentImg]
+        print("Filename is: ", filename )
 
-    if Driver:
-      copyframe = frame
-      threshold = threshold_video(lower_green, upper_green, frame)
-      processed, TargetPixelFromCenter, YawToTarget, distance = findTargets(copyframe, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
-      #Use driver Overlay with same Microsoft camera with 68.5 FOV
-      processed = DriverOverlay(copyframe, CameraFOV, OverlayScaleFactor, TargetPixelFromCenter ,YawToTarget, (distance/12))
-    else:
-        if Tape:
-            threshold = threshold_video(lower_green, upper_green, frame)
-            processed, TargetPixelFromCenter, YawToTarget, distance = findTargets(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
+    processed = frame
+
+    if Tape:
+        threshold = threshold_video(lower_green, upper_green, frame)
+        processed, TargetPixelFromCenter, YawToTarget, distance = findTargets(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
     
-        if Cargo:
-            if Red:
-                boxBlur = blurImg(frame, red_blur)
-                threshold = threshold_video(lower_red, upper_red, boxBlur)
-            elif Blue:
-                boxBlur = blurImg(frame, blue_blur)
-                threshold = threshold_video(lower_blue, upper_blue, boxBlur)
-            processed = findCargo(frame, CameraFOV, threshold, MergeVisionPipeLineTableName)
+    if Intake:
+        processed = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
+        #processed = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
+        #processed, yaw = findCube(frame, MergeVisionPipeLineTableName,CameraFOV)
+
+    if Cone:
+        processed = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
+
+    if Cube: 
+        processed, yaw = findCube(frame, MergeVisionPipeLineTableName,CameraFOV)
+
+    if AprilTag:
+        print("This should run the AprilTags Code")
+
+       # if AprilTag:
+        #    findAprilTag(frame, CameF)
 
            
 
@@ -206,9 +217,9 @@ while stayInLoop or cap.isOpened():
     # because we are timing in this file, have to add the fps to image processed 
     #cv2.putText(processed, 'elapsed time: {:.2f}'.format(fps.elapsed()), (40, 40), cv2.FONT_HERSHEY_COMPLEX, 0.6 ,white)
     #cv2.putText(processed, 'FPS: {:.7f}'.format(3.14159265), (40, 80), cv2.FONT_HERSHEY_COMPLEX, 0.6 ,white)
-    if not Driver:
-        cv2.putText(processed, "frame time: " + str(int(processedMilli)) + " ms", (40, 40), cv2.FONT_HERSHEY_COMPLEX, 0.6 ,white)
-        cv2.putText(processed, 'Instant FPS: {:.2f}'.format(1000/(processedMilli)), (40, 80), cv2.FONT_HERSHEY_COMPLEX, 0.6 ,white)
+    
+    #cv2.putText(processed, "frame time: " + str(int(processedMilli)) + " ms", (40, 40), cv2.FONT_HERSHEY_COMPLEX, 0.6 ,white)
+    #cv2.putText(processed, 'Instant FPS: {:.2f}'.format(1000/(processedMilli)), (40, 80), cv2.FONT_HERSHEY_COMPLEX, 0.6 ,white)
     
     if (showAverageFPS): 
         cv2.putText(processed, 'Grouped FPS: {:.2f}'.format(1000/(displayFPS)), (20, 20), cv2.FONT_HERSHEY_COMPLEX, 0.6 ,white)
@@ -245,13 +256,6 @@ while stayInLoop or cap.isOpened():
             currentImg = currentImg + 1
             if currentImg > imgLength - 1:
                 currentImg = 0
-        if key == 32 :
-            if Red == True:
-                Blue = True
-                Red = False
-            elif Blue == True :
-                Red = True
-                Blue = False
 
         #destroy old window
         cv2.destroyWindow(filename)

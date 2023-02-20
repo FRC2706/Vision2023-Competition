@@ -3,15 +3,15 @@
     "networkTableReadName": "MergeVisionPipelinePi21",
     "Driver": false,
     "Tape": true,
-    "Cargo": false,
-    "Red": true,
-    "Blue": false,
+    "AprilTag": false,
+    "Intake": false,
     "OutputStream": "2706_out_target",
-    "ExposureTarget": 17,
+    "ExposureTape": 40,
     "ExposureBall": 100,
     "CameraFOV": 68.5,
     "CameraTiltAngle": 35,
     "OverlayScaleFactor": 0.2,
     "OutputStreamWidth": 320,
-    "OutputStreamHeight": 160
+    "OutputStreamHeight": 160,
+    "CameraRotation": true
 }

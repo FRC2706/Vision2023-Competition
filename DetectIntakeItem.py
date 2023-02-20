@@ -5,8 +5,6 @@ import math
 from VisionUtilities import * 
 from VisionConstants import *
 from DistanceFunctions import *
-from ntcore import NetworkTableInstance
-#from ntcore.util import ntproperty
 
 try:
     from PrintPublisher import *
