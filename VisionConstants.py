@@ -50,6 +50,8 @@ def calculateFocalLengthsFromInput(cameraFOV, image_width, image_height):
 
     #To calculate the aspect ratio, first find the greatest common divisor between the
     #image height and image width of the camera
+    print(image_width)
+    print(image_height)
     resolution_gcd = math.gcd(image_width, image_height)
 
     #The horizontal aspect is simply the imagewidth divided by the gcd
@@ -119,5 +121,11 @@ upper_red = np.array([180,255,255])
 
 lower_blue = np.array([64,127,116]) 
 upper_blue = np.array([115,213,255]) 
+
+lower_purple = np.array([99,2,49]) 
+upper_purple = np.array([182,196,213]) 
+
+lower_white = np.array([240,240,240]) 
+upper_white = np.array([255,255,255]) 
 
 blingColour = 0

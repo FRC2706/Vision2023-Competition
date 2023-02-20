@@ -21,8 +21,8 @@ from cscore import CameraServer, VideoSource
 from networktables import NetworkTablesInstance
 import cv2
 import numpy as np
-from networktables import NetworkTables
-from networktables.util import ntproperty
+#from networktables import NetworkTables
+#from networktables.util import ntproperty
 import math
 
 ########### SET RESOLUTION TO 256x144 !!!! ############

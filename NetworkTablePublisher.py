@@ -1,18 +1,17 @@
-from networktables import NetworkTablesInstance
-from networktables import NetworkTables
+from ntcore import NetworkTableInstance
 
 def publishNumber(MergeVisionPipeLineTableName, name, value):
     #start NetworkTables
-    ntinst = NetworkTablesInstance.getDefault()
+    ntinst = NetworkTableInstance.getDefault()
     # Name of network table - this is how it communicates with robot. IMPORTANT
-    networkTable = NetworkTables.getTable(MergeVisionPipeLineTableName)
-    networkTable.putNumber(name, value)
+    networktable = ntinst.getTable(MergeVisionPipeLineTableName)
+    networktable.putNumber(name, value)
     #print(name+ ": " + str(value))
 
-def publishString(NetworkTableName,name, Strvalue):
+def publishString(MergeVisionPipeLineTableName,name, Strvalue):
     #start NetworkTables
-    ntinst = NetworkTablesInstance.getDefault()
+    ntinst = NetworkTableInstance.getDefault()
     # Name of network table - this is how it communicates with robot. IMPORTANT
-    networkTable = NetworkTables.getTable(NetworkTableName)
-    networkTable.putString(name, Strvalue)
+    networktable = ntinst.getTable(MergeVisionPipeLineTableName)
+    networktable.putString(name, Strvalue)
     #print(name+ ": " + str(value))    

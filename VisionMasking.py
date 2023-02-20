@@ -20,7 +20,7 @@ def threshold_video(lower_color, upper_color, blur):
     combined_mask = cv2.bitwise_and(h, cv2.bitwise_and(s, v))
     
     #show the mask
-    cv2.imshow("mask", combined_mask)
+   #cv2.imshow("mask", combined_mask)
 
     # hold the HSV image to get only red colors
     # mask = cv2.inRange(combined, lower_color, upper_color)
