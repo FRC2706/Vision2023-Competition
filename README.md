@@ -28,11 +28,11 @@ To install open CV
  - pip install opencv-python
 
 To get networktables (To talk to our robot)
- - pip install robotpy
+ - pip3 install --upgrade robotpy
  - pip install pynetworktables
  
 To get apriltags (to detect Apriltags)
- - pip install pupil-apriltags
+ - pip install robotpy[robotpy_apriltag]
 
 Clone Vision repository
  - git clone https://github.com/FRC2706/Vision2022-Competition.git
