@@ -509,6 +509,8 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                 # If success then print values to screen                               
                 if success:
                     distance, angle1, angle2 = compute_output_values(rvec, tvec, CameraTiltAngle)
+                    poseX = tvec[0][0]
+                    poseY = tvec[1][0]
                     
                     past_distances.append(distance)
                     if len(past_distances) > 5:
@@ -523,6 +525,8 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                     cv2.putText(image, "SolvePnPTargetYawToCenter: " + str(round(angle1,2)), (20, 170), cv2.FONT_HERSHEY_COMPLEX, .6,white)
                     cv2.putText(image, "Distance: " + str(round((distance/12),2)), (20, 200), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
                     cv2.putText(image, "Average Distance: " + str(round((average_distance/12),2)), (20, 230), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
+                    cv2.putText(image, "PoseX: " + str(round((poseX),2)), (20, 260), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
+                    cv2.putText(image, "PoseY: " + str(round((poseY),2)), (20, 290), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
                    
 
                 #start with a non-existing colour
@@ -573,6 +577,8 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                     publishNumber(MergeVisionPipeLineTableName, "AverageDistance", round(average_distance/12,2))
                     publishNumber(MergeVisionPipeLineTableName, "RobotYawToTarget", round(RobotYawToTarget,2))
                     publishNumber(MergeVisionPipeLineTableName, "TargetPixelFromCenter", round(final_center-centerX,2))
+                    publishNumber(MergeVisionPipeLineTableName, "PoseX", round(poseX,2))
+                    publishNumber(MergeVisionPipeLineTableName, "PoseY", round(poseY,2))
 
             else:
                 #If Nothing is found, publish -99 and -1 to Network table
@@ -581,6 +587,8 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                 publishNumber(MergeVisionPipeLineTableName, "AverageDistance", -1)  
                 publishNumber(MergeVisionPipeLineTableName, "RobotYawToTarget", -99)
                 publishNumber(MergeVisionPipeLineTableName, "TargetPixelFromCenter", -99)
+                publishNumber(MergeVisionPipeLineTableName, "PoseX", -99)
+                publishNumber(MergeVisionPipeLineTableName, "PoseY", -99)
                 publishString("blingTable","command","clear")
                 past_distances.clear()
                 #print("past_distances are gone")
@@ -592,6 +600,8 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
         publishNumber(MergeVisionPipeLineTableName, "AverageDistance", -1)  
         publishNumber(MergeVisionPipeLineTableName, "RobotYawToTarget", -99) 
         publishNumber(MergeVisionPipeLineTableName, "TargetPixelFromCenter", -99)
+        publishNumber(MergeVisionPipeLineTableName, "PoseX", -99)
+        publishNumber(MergeVisionPipeLineTableName, "PoseY", -99)
         publishString("blingTable","command","clear") 
         past_distances.clear()
         #print("past_distances are gone")
