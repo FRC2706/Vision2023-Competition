@@ -560,7 +560,7 @@ if __name__ == "__main__":
 
         # Resize stream based on the type of stream
         if (OutputStreamWidth != 0):
-            processed = cv2.resize(processed, OutputStreamWidth,OutputStreamHeight,fx=0,fy=0,interpolation=cv2.INTER_CUBIC)
+            processed = cv2.resize(processed, (OutputStreamWidth,OutputStreamHeight), fx=0,fy=0,interpolation=cv2.INTER_CUBIC)
         streamViewer.frame = processed
 
         # Flushes camera values to reduce latency
