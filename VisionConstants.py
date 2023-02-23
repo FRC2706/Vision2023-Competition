@@ -95,7 +95,7 @@ red_blur = 1
 blue_blur = 1
 
 # define colors
-purple = (165, 0, 120)
+purple = (165, 0, 180)
 blue = (255, 0, 0)
 green = (0, 255, 0)
 red = (0, 0, 255)

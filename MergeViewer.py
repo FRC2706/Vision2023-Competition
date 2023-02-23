@@ -60,9 +60,9 @@ webCamNumber = 1
 
 # ADJUST DESIRED TARGET BASED ON VIDEO OR FILES ABOVE !!!
 Tape = False
-Cone = True
+Cone = False
 Cube = False
-Intake = False
+Intake = True
 AprilTag = False
 CameraFOV = 68.5
 CameraTiltAngle = 30
@@ -176,9 +176,9 @@ while stayInLoop or cap.isOpened():
         processed, TargetPixelFromCenter, YawToTarget, distance = findTargets(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
     
     if Intake:
-        processed = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
-        #processed = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
-        #processed, yaw = findCube(frame, MergeVisionPipeLineTableName,CameraFOV)
+        processed,_,_,_ = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
+        processed, _ = findCube(processed, MergeVisionPipeLineTableName,CameraFOV)
+        processed, _ = findCone(processed, MergeVisionPipeLineTableName,CameraFOV)
 
     if Cone:
         processed, yaw = findCone(frame, MergeVisionPipeLineTableName, CameraFOV)

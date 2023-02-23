@@ -511,9 +511,9 @@ if __name__ == "__main__":
 
 
         if (networkTableVisionPipeline.getBoolean("Intake", True)):
-            processed = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
-            processed, yaw = findCube(frame, MergeVisionPipeLineTableName,CameraFOV)
-            processed = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
+            processed,_,_,_ = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
+            processed, _ = findCube(processed, MergeVisionPipeLineTableName,CameraFOV)
+            processed, _ = findCone(processed, MergeVisionPipeLineTableName,CameraFOV)
                   
 
         # Puts timestamp of camera on network tables
