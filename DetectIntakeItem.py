@@ -71,12 +71,12 @@ def FindRectFillAmount(image,contours,x,y,w,h):
         cntsArea = 0
         for cnt in contours:
             cntx, cnty, cntw, cnth = cv2.boundingRect(cnt)
-            print("cnth: " + str(cnth))
+            #print("cnth: " + str(cnth))
             
             cv2.drawContours(image, [cnt], 0, green, 2)
             # Calculate Contour area
             cntsArea += cv2.contourArea(cnt)
-            print("Area of contour: " + str(cntsArea))
+            #print("Area of contour: " + str(cntsArea))
         desiredRectArea = w*h
         #percentage of contours in desired rect
         desiredRectFilledArea = float(cntsArea/desiredRectArea)
