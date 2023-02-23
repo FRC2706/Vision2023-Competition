@@ -1,7 +1,8 @@
 #use findtape to find distance
 
-from FindTarget import*
-from pupil_apriltags import Detector
+from FindTape import*
+import robotpy_apriltag
+from robotpy_apriltag import AprilTagDetector
 import cv2
 import numpy as np
 from math import degrees
@@ -22,14 +23,6 @@ object_points.append(  [float(marker_size / 2),float(-marker_size / 2), 0])
 object_points.append(  [float(-marker_size / 2),float(-marker_size / 2), 0])
 object_points = np.array(object_points)
 
-detector = Detector(
-   families="tag16h5",
-   nthreads=1,
-   quad_decimate=1.0,
-   quad_sigma=0.0,
-   refine_edges=1,
-   decode_sharpening=0.5,
-)
 #main function 
 def findAprilTagCorner(image, cameraFOV, CameraTiltAngle,MergeVisionPipeLineTableName):
     apriltag_outer_corner(image, cameraFOV, CameraTiltAngle,MergeVisionPipeLineTableName)
@@ -64,17 +57,18 @@ def calc_distance(image, cameraFOV, corners, CameraTiltAngle):
 
 def apriltag_outer_corner(image, cameraFOV, CameraTiltAngle,MergeVisionPipeLineTableName):
 
-    detector = Detector(
-        families="tag16h5",
-        nthreads=1,
-        quad_decimate=1.0,
-        quad_sigma=0.0,
-        refine_edges=1,
-        decode_sharpening=0.5,
-    )
+    detector = robotpy_apriltag.AprilTagDetector()
+    detector.addFamily("tag16h5")
+        #detector.addFamily("tag36h11")
+    
+    #Detect AprilTag
+    DETECTION_MARGIN_THRESHOLD = 100
+    DETECTION_ITERATIONS = 50
+
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
     results = detector.detect(gray)
+    filter_tags = [tag for tag in results if tag.getDecisionMargin() > DETECTION_MARGIN_THRESHOLD]
 
     
     corners = np.empty
@@ -84,40 +78,62 @@ def apriltag_outer_corner(image, cameraFOV, CameraTiltAngle,MergeVisionPipeLineT
     distance_to_tag_and_yaw = {}
     for tag in results:
 
-        if (tag.hamming == 0):
+        if (tag.getHamming() == 0):
             # print("-------------------------------------")
             # print(r)
             # print("-------------------------------------")
-            (ptA, ptB, ptC, ptD) = tag.corners
+            #(ptA, ptB, ptC, ptD) = tag.getCorners()
+            # print(tag.getCorners())
         
             # extract the bounding box (x, y)-coordinates for the AprilTag
             # and convert each of the (x, y)-coordinate pairs to integers
-            ptB = (int(ptB[0]), int(ptB[1]))
-            ptC = (int(ptC[0]), int(ptC[1]))
-            ptD = (int(ptD[0]), int(ptD[1]))
-            ptA = (int(ptA[0]), int(ptA[1]))
+
+            corner0 = (int(tag.getCorner(0).x), int(tag.getCorner(0).y))
+            corner1 = (int(tag.getCorner(1).x), int(tag.getCorner(1).y))
+            corner2 = (int(tag.getCorner(2).x), int(tag.getCorner(2).y))
+            corner3 = (int(tag.getCorner(3).x), int(tag.getCorner(3).y))
+            cv2.line(image, corner0, corner1, color = (0, 255, 0), thickness = 2)
+            cv2.line(image, corner1, corner2, color = (0, 255, 0), thickness = 2)
+            cv2.line(image, corner2, corner3, color = (0, 255, 0), thickness = 2)
+            cv2.line(image, corner3, corner0, color = (0, 255, 0), thickness = 2)
+            
+            #ptB = (int(ptB[0]), int(ptB[1]))
+            #ptC = (int(ptC[0]), int(ptC[1]))
+            #ptD = (int(ptD[0]), int(ptD[1]))
+            #ptA = (int(ptA[0]), int(ptA[1]))
 
         # draw the bounding box of the AprilTag detection
-            cv2.line(image, ptA, ptB, (0, 255, 0), 2)
-            cv2.line(image, ptB, ptC, (0, 255, 0), 2)
-            cv2.line(image, ptC, ptD, (0, 255, 0), 2)
-            cv2.line(image, ptD, ptA, (0, 255, 0), 2)
-            cv2.line(image, ptD, ptA, (0, 255, 0), 2)
+            # cv2.line(image, ptA, ptB, (0, 255, 0), 2)
+            # cv2.line(image, ptB, ptC, (0, 255, 0), 2)
+            # cv2.line(image, ptC, ptD, (0, 255, 0), 2)
+            # cv2.line(image, ptD, ptA, (0, 255, 0), 2)
+            # cv2.line(image, ptD, ptA, (0, 255, 0), 2)
             
         # draw the center (x, y)-coordinates of the AprilTag
-            (cX, cY) = (int(tag.center[0]), int(tag.center[1]))
+            print(tag.getCenter().x)
+            (cX, cY) = (int(tag.getCenter().x), int(tag.getCenter().y))
             cv2.circle(image, (cX, cY), 5, (0, 0, 255), -1)
         
         # ERIK: Tag family should contain a string, "36h11" which is the family of the apriltag. 
         # FIRST says we should only have 36h11 tags so might be a good check to see if the target is good.
-        
-            tagFamily = tag.tag_family.decode("utf-8")
+            print(tag)
+            tagFamily = tag.getFamily()
         
         # Put the text for the id of the tag
-            cv2.putText(image, f"id: {tag.tag_id}", (ptA[0], ptA[1] - 15),
+            cv2.putText(image, f"id: {tag.getId()}", (corner0[0], corner0[1] - 15),
             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-            corners = np.array(tag.corners)
+            # corners = np.array(tag.getCorners())
+
+            # corners_list = []
+            # for c in [corner0, corner1, corner2, corner3]:
+            #     corners_list.append(c[0])
+            #     corners_list.append(c[1])
+            # print(corners_list)
+            # corners = np.array(corners_list)
+
+            corners = np.array([corner0, corner1, corner2, corner3])
             if np.size(corners) >= 4:
+                print("UIHFIUEOIwofie;ji;fjsp;ifjariofjraio")
                 distance, yaw = calc_distance(image, cameraFOV, corners, CameraTiltAngle)
                 distance_to_tag_and_yaw[distance] = [tag, yaw]
                 # if min_distance == -1:
@@ -126,10 +142,10 @@ def apriltag_outer_corner(image, cameraFOV, CameraTiltAngle,MergeVisionPipeLineT
                 #     if distance < min_distance:
                 #         min_distance = distance
 
-                cv2.putText(image, f"ft: {round(distance/12, 2)}", (ptA[0], ptA[1] + 15),
+                cv2.putText(image, f"ft: {round(distance/12, 2)}", (corner0[0], corner0[1] + 15),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
-                cv2.putText(image, f"yaw: {round(yaw, 2)}", (ptA[0], ptA[1] + 40),
+                cv2.putText(image, f"yaw: {round(yaw, 2)}", (corner0[0], corner0[1] + 40),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
                   
                 #cv2.putText(image, f"d: " {distance}, (ptA[0], ptA[1] + 15),
@@ -140,19 +156,22 @@ def apriltag_outer_corner(image, cameraFOV, CameraTiltAngle,MergeVisionPipeLineT
             else:
                 print("hello world")
                 distance = -1
+    if len(distance_to_tag_and_yaw) > 0:
+        distance = min(distance_to_tag_and_yaw.keys())
+        yaw = distance_to_tag_and_yaw[distance][1]
+        tag_id = distance_to_tag_and_yaw[distance][0].tag_id
 
-    distance = min(distance_to_tag_and_yaw.keys())
-    yaw = distance_to_tag_and_yaw[distance][1]
-    tag_id = distance_to_tag_and_yaw[distance][0].tag_id
+        # convert distance from inches to feet
+        distance = round(distance/12, 2)
+        yaw = round(yaw, 2)
 
-    # convert distance from inches to feet
-    distance = round(distance/12, 2)
-    yaw = round(yaw, 2)
-
-    # publish values to network table
-    publishNumber(MergeVisionPipeLineTableName, "DistanceToAprilTag", distance)
-    publishNumber(MergeVisionPipeLineTableName, "YawToAprilTag", yaw)
-    publishNumber(MergeVisionPipeLineTableName, "TagID", tag_id)
+        # publish values to network table
+        """
+        publishNumber(MergeVisionPipeLineTableName, "DistanceToAprilTag", distance)
+        publishNumber(MergeVisionPipeLineTableName, "YawToAprilTag", yaw)
+        publishNumber(MergeVisionPipeLineTableName, "TagID", tag_id) 
+        """
+   
                 
                 
         
