@@ -18,10 +18,11 @@ import math
 import datetime
 
 from FindTape import *
-from FindAprilTags import *
+from FindAprilTag import *
+from FindAprilTagRobotpy import *
 from FindCube import *
 from FindCone import *
-from FindIntake import *
+from DetectIntakeItem import *
 from VisionConstants import *
 from VisionUtilities import *
 from VisionMasking import *
