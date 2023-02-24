@@ -28,7 +28,7 @@ import math
 
 # Imports EVERYTHING from these files
 from FindTape import *
-#from FindAprilTag import *
+from FindAprilTagRobotpy import *
 from FindCube import *
 from FindCone import *
 from DetectIntakeItem import *
@@ -87,7 +87,7 @@ class WebcamVideoStream:
         self.autoExpose = True
         self.prevValue = True
 
-        self.switchBall = False
+        self.switchAprilTag = False
         self.switchTape = False
         
         # Make a blank image to write on
@@ -136,17 +136,17 @@ class WebcamVideoStream:
                     self.webcam.setExposureManual(60)
                     self.webcam.setExposureManual(ExposureTape)
                     self.switchTape = True
-                    self.switchBall = False
+                    self.switchAprilTag = False
                     #self.prevValue = self.autoExpose
 
-            elif switch == 3: #Cargo Mode - set exposure to 39
+            elif switch == 3: #AprilTag Mode - set exposure to 39
                 #self.autoExpose = False
                 #if self.autoExpose != self.prevValue:
-                if self.switchBall != True:
-                    self.webcam.setExposureManual(ExposureBall)
+                if self.switchAprilTag != True:
+                    self.webcam.setExposureManual(ExposureAprilTag)
                     self.webcam.setExposureManual(39)
                     self.webcam.setExposureAuto()
-                    self.switchBall = True
+                    self.switchAprilTag = True
                     self.switchTape = False
                     #self.prevValue = self.autoExpose
 
@@ -214,6 +214,7 @@ Intake = data["Intake"]
 AprilTagsEnabled = data["AprilTag"]
 OutputStream = data["OutputStream"]
 ExposureTape = data["ExposureTape"]
+ExposureAprilTag = data["ExposureAprilTag"]
 CameraFOV = data["CameraFOV"]
 CameraTiltAngle = data["CameraTiltAngle"]
 OverlayScaleFactor = data["OverlayScaleFactor"]
@@ -371,7 +372,8 @@ if __name__ == "__main__":
     else:
         #print("Setting up NetworkTables client for team {}".format(team))
         ntinst.startClient4("Merge Client")
-        ntinst.startServer()
+        ntinst.setServerTeam(team)
+        ntinst.startDSClient()
 
     # start cameras
     cameras = []
@@ -501,13 +503,13 @@ if __name__ == "__main__":
                 if rpm != 0:
                     cv2.putText(processed, "RPM: " + str(round(rpm,2)), (20, 340), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
 
-        #if (networkTableVisionPipeline.getBoolean("AprilTag", True)):
+        if (networkTableVisionPipeline.getBoolean("AprilTag", True)):
             
             #TargetPixelFromCenter = networkTableVisionReadPipeline.getNumber("TargetPixelFromCenter", -99)
            # yaw = networkTableVisionReadPipeline.getNumber("YawToTarget", -99)
            # distance = networkTableVisionReadPipeline.getNumber("DistanceToTarget", -1)
            # NTOverlayScaleFactor = networkTableVisionReadPipeline.getValue("OverlayScaleFactor",OverlayScaleFactor)
-        #    processed = findAprilTagCorner(frame, CameraFOV, CameraTiltAngle,MergeVisionPipeLineTableName)
+            processed = findAprilTagRobotpy(frame, MergeVisionPipeLineTableName)
 
 
         if (networkTableVisionPipeline.getBoolean("Intake", True)):
