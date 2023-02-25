@@ -12,6 +12,6 @@
     "CameraTiltAngle": 35,
     "OverlayScaleFactor": 0.2,
     "OutputStreamWidth": 320,
-    "OutputStreamHeight": 160,
+    "OutputStreamHeight": 180,
     "CameraRotation": true
 }
