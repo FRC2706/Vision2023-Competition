@@ -59,8 +59,9 @@ def DetectIntakeItem(frame, MergeVisionPipeLineTableName):
     #publishNumber(MergeVisionPipeLineTableName, "YawToCargo", finalTarget[0])
     #publishNumber(MergeVisionPipeLineTableName, "DistanceToCargo", finalTarget[1])
     #publishNumber(MergeVisionPipeLineTableName, "CargoCentroid1Yaw", finalTarget[2])
-    cv2.line(image, (round(x), round(y)), (round(x+w), round(y+h)), white, 2)
-    return image, displayMask, FoundYellow, FoundPurple
+    #cv2.line(image, (round(x), round(y)), (round(x+w), round(y+h)), white, 2)
+    #cv2.imshow("area",image)
+    return frame, displayMask, FoundYellow, FoundPurple
 
 def FindRectFillAmount(image,contours,x,y,w,h):
     # Seen vision targets (correct angle, adjacent to each other)
@@ -80,7 +81,7 @@ def FindRectFillAmount(image,contours,x,y,w,h):
         desiredRectArea = w*h
         #percentage of contours in desired rect
         desiredRectFilledArea = float(cntsArea/desiredRectArea)
-        if desiredRectFilledArea > 0.2:
+        if desiredRectFilledArea > 0.1:
             Found = True
         else:
             Found = False
