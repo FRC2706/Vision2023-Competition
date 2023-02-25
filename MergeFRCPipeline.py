@@ -371,7 +371,8 @@ if __name__ == "__main__":
     else:
         #print("Setting up NetworkTables client for team {}".format(team))
         ntinst.startClient4("Merge Client")
-        ntinst.startServer()
+        ntinst.setServerTeam(team)
+        ntinst.startDSClient()
 
     # start cameras
     cameras = []
@@ -403,7 +404,11 @@ if __name__ == "__main__":
     networkTableMatchVariables.putBoolean("ShutDown",False)
 
     #PipeLine Table Values, Unique for Each PipeLine
-
+    #boolTopicTape = networkTableVisionPipeline.getBooleanTopic("Tape")
+    #boolEntryTape = boolTopicTape.getEntry(False)
+    #boolEntryTape.set(TapeEnabled)
+    #boolEntryTape.close()
+    
     networkTableVisionPipeline.putBoolean("Tape", TapeEnabled)
     networkTableVisionPipeline.putBoolean("AprilTag", AprilTagsEnabled)
     networkTableVisionPipeline.putBoolean("Intake", Intake)
