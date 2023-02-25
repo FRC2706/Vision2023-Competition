@@ -486,7 +486,7 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
 
                      success, rvec, tvec = findTvecRvec(image, outer_corners, real_world_coordinates,H_FOCAL_LENGTH,V_FOCAL_LENGTH) 
                     
-                cv2.putText(image, "TargetYaw: " + str(YawToTarget), (20, 100), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
+                cv2.putText(image, "TargetYaw: " + str(YawToTarget), (20, 100), cv2.FONT_HERSHEY_COMPLEX, 0.5,white)
                 #cv2.putText(image, "Average Area: " + str(average_area), (20, 240), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
 
                 # If success then print values to screen                               
@@ -505,13 +505,13 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                     #calculate RobotYawToTarget based on Robot offset (subtract 180 degrees)
                     RobotYawToTarget = 180-abs(angle2)
           
-                    cv2.putText(image, "RobotYawToTarget: " + str(round(RobotYawToTarget,2)), (20, 140), cv2.FONT_HERSHEY_COMPLEX, .6,white)
-                    cv2.putText(image, "SolvePnPTargetYawToCenter: " + str(round(angle1,2)), (20, 170), cv2.FONT_HERSHEY_COMPLEX, .6,white)
-                    cv2.putText(image, "Distance: " + str(round((distance/12),2)), (20, 200), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
-                    cv2.putText(image, "Average Distance: " + str(round((average_distance/12),2)), (20, 230), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
-                    cv2.putText(image, "PoseX: " + str(round((poseX),2)), (20, 260), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
-                    cv2.putText(image, "PoseY: " + str(round((poseY),2)), (20, 290), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
-                    cv2.putText(image, "PoseZ: " + str(round((poseZ),2)), (20, 320), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)                   
+                    # cv2.putText(image, "RobotYawToTarget: " + str(round(RobotYawToTarget,2)), (20, 140), cv2.FONT_HERSHEY_COMPLEX, .6,white)
+                    # cv2.putText(image, "SolvePnPTargetYawToCenter: " + str(round(angle1,2)), (20, 170), cv2.FONT_HERSHEY_COMPLEX, .6,white)
+                    cv2.putText(image, "Distance: " + str(round((distance/12),2)), (20, 200), cv2.FONT_HERSHEY_COMPLEX, 0.5,white)
+                    # cv2.putText(image, "Average Distance: " + str(round((average_distance/12),2)), (20, 230), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
+                    # cv2.putText(image, "PoseX: " + str(round((poseX),2)), (20, 260), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
+                    # cv2.putText(image, "PoseY: " + str(round((poseY),2)), (20, 290), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
+                    # cv2.putText(image, "PoseZ: " + str(round((poseZ),2)), (20, 320), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)                   
 
                 #start with a non-existing colour
                 
