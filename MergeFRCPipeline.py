@@ -18,17 +18,20 @@ from threading import Thread
 import random
 
 from cscore import CameraServer, VideoSource
-from networktables import NetworkTablesInstance
+from ntcore import NetworkTableInstance
 import cv2
 import numpy as np
-from networktables import NetworkTables
-from networktables.util import ntproperty
+#from networktables import NetworkTable
+from ntcore import NetworkTable
+#from networktables.util import ntproperty
 import math
 
 # Imports EVERYTHING from these files
-from FindBall import *
-from FindAprilTag import *
 from FindTape import *
+#from FindAprilTag import *
+from FindCube import *
+from FindCone import *
+from DetectIntakeItem import *
 from VisionConstants import *
 from VisionUtilities import *
 from VisionMasking import *
@@ -44,7 +47,7 @@ print()
 import datetime
 
 # class that runs separate thread for showing video,
-class VideoShow():
+class VideoShow:
     """
     Class that continuously shows a frame using a dedicated thread.
     """
@@ -72,7 +75,7 @@ class VideoShow():
 
 
 # Class that runs a separate thread for reading  camera server also controlling exposure.
-class WebcamVideoStream():
+class WebcamVideoStream:
     def __init__(self, camera, cameraServer, frameWidth, frameHeight, name="WebcamVideoStream"):
         # initialize the video camera stream and read the first frame
         # from the stream
@@ -84,7 +87,7 @@ class WebcamVideoStream():
         self.autoExpose = True
         self.prevValue = True
 
-        self.switchAprilTag = False
+        self.switchBall = False
         self.switchTape = False
         
         # Make a blank image to write on
@@ -174,6 +177,7 @@ ImageCounter = 0
 # Masks the video based on a range of hsv colors
 # Takes in a frame, range of color, and a blurred frame, returns a masked frame
 def threshold_video(lower_color, upper_color, blur):
+
     # Convert BGR to HSV
     hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
     h, s, v = cv2.split(hsv)
@@ -206,20 +210,20 @@ with open(pipelineConfig) as json_file:
 
 MergeVisionPipeLineTableName = data["networkTableName"]
 MergeVisionReadPipeLineTableName = data["networkTableReadName"]
-DriverEnabled = data["Driver"]
 TapeEnabled = data["Tape"]
+Intake = data["Intake"]
 AprilTagsEnabled = data["AprilTag"]
 OutputStream = data["OutputStream"]
-ExposureTape = data["ExposureTarget"]
-ExposureBall = data["ExposureBall"]
+ExposureTape = data["ExposureTape"]
 CameraFOV = data["CameraFOV"]
 CameraTiltAngle = data["CameraTiltAngle"]
 OverlayScaleFactor = data["OverlayScaleFactor"]
 OutputStreamWidth = data["OutputStreamWidth"]
 OutputStreamHeight = data["OutputStreamHeight"]
+CameraRotation = data["CameraRotation"]
 
 
-if DriverEnabled:
+if Intake:
     switch = 1
 
 elif TapeEnabled:
@@ -312,12 +316,16 @@ def readConfig():
     return True
 
 """Start running the camera."""
+
 def startCamera(config):
     #print("Starting camera '{}' on {}".format(config.name, config.path))
-    cs = CameraServer.getInstance()
-    camera = cs.startAutomaticCapture(name=config.name, path=config.path)
+    #camera = CameraServer.startAutomaticCapture()
+    camera = CameraServer.startAutomaticCapture(name=config.name, path=config.path)
     camera.setConfigJson(json.dumps(config.config))
-    return cs, camera
+    return CameraServer, camera    
+
+
+ #   return camera, server
 
 start, switched, prevCam = True, False, 0
 
@@ -345,21 +353,17 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # start NetworkTables
-    ntinst = NetworkTablesInstance.getDefault()
+    ntinst = NetworkTableInstance.getDefault()
     # Name of network table - this is how it communicates with robot. IMPORTANT
-    networkTableMatch = NetworkTables.getTable("FMSInfo")
-    networkTableTime = NetworkTables.getTable("SmartDashboard")
-    networkTableMatchVariables = NetworkTables.getTable("VisionControl")
-
-    networkTableBling = NetworkTables.getTable("blingTable")
+    networkTableMatch = ntinst.getTable("FMSInfo")
+    networkTableTime = ntinst.getTable("SmartDashboard")
+    networkTableMatchVariables = ntinst.getTable("VisionControl")
     
-
-
     #Used to control MergeVisionPipeLineSettings
-    networkTableVisionPipeline = NetworkTables.getTable(MergeVisionPipeLineTableName)
+    networkTableVisionPipeline = ntinst.getTable(MergeVisionPipeLineTableName)
 
     #NetworkTable to read from if needed
-    networkTableVisionReadPipeline = NetworkTables.getTable(MergeVisionReadPipeLineTableName)
+    networkTableVisionReadPipeline = ntinst.getTable(MergeVisionReadPipeLineTableName)
 
 
     if server:
@@ -367,9 +371,9 @@ if __name__ == "__main__":
         ntinst.startServer()
     else:
         #print("Setting up NetworkTables client for team {}".format(team))
-        #ntinst.startClientTeam(team)
-        ntinst.startClient("Merge Client")
+        ntinst.startClient4("Merge Client")
         ntinst.setServerTeam(team)
+        ntinst.startDSClient()
 
     # start cameras
     cameras = []
@@ -395,18 +399,19 @@ if __name__ == "__main__":
     tape = True
 
     
+    #NetworkTable to read from if needed
+    networkTableVisionReadPipeline = ntinst.getTable(MergeVisionReadPipeLineTableName)
     networkTableMatchVariables.putBoolean("StartUp",False)
     networkTableMatchVariables.putBoolean("ShutDown",False)
 
     #PipeLine Table Values, Unique for Each PipeLine
-    networkTableVisionPipeline.putBoolean("Driver", DriverEnabled)
+
     networkTableVisionPipeline.putBoolean("Tape", TapeEnabled)
-    networkTableVisionPipeline.putBoolean("AprilTags", AprilTagsEnabled)
+    networkTableVisionPipeline.putBoolean("AprilTag", AprilTagsEnabled)
+    networkTableVisionPipeline.putBoolean("Intake", Intake)
     #networkTable.putBoolean("ControlPanel", False)
     networkTableVisionPipeline.putBoolean("WriteImages", False)
     networkTableVisionPipeline.putBoolean("SendMask", False)
-    networkTableVisionPipeline.putBoolean("TopCamera", False)
-    networkTableVisionPipeline.putBoolean("Cam", currentCam)
     #networkTable.putBoolean("Aligned", False)
     networkTableVisionPipeline.putValue("OverlayScaleFactor",OverlayScaleFactor)
 
@@ -453,10 +458,6 @@ if __name__ == "__main__":
             stoppedImageWrite = True
             networkTableVisionPipeline.putBoolean("WriteImages", False)     
 
-        if networkTableVisionPipeline.getBoolean("TopCamera", False):
-            currentCam = 1
-        else:
-            currentCam = 0
 
         if networkTableVisionPipeline.getNumber("Cam", currentCam) != prevCam:
             switchCam()
@@ -490,9 +491,7 @@ if __name__ == "__main__":
         
 
         #Check if Network Table value Tape is True
-        if (networkTableVisionPipeline.getBoolean("Tape", True)):
-            switch = 2
-            #Method = int(networkTableVisionPipeline.getNumber("Method", 7))
+        if (networkTableVisionPipeline.getBoolean("Tape", True)): 
             threshold = threshold_video(lower_green, upper_green, frame)
             if (networkTableVisionPipeline.getBoolean("SendMask", False)):
                 processed = threshold
@@ -504,44 +503,20 @@ if __name__ == "__main__":
                 if rpm != 0:
                     cv2.putText(processed, "RPM: " + str(round(rpm,2)), (20, 340), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
 
-        if networkTableVisionPipeline.getBoolean("AprilTag", True):
-            switch = 1
-            TargetPixelFromCenter = networkTableVisionReadPipeline.getNumber("TargetPixelFromCenter", -99)
-            yaw = networkTableVisionReadPipeline.getNumber("YawToAprilTag", -99)
-            distance = networkTableVisionReadPipeline.getNumber("DistanceToAprilTag", -1)
-            tag_id = networkTableVisionReadPipeline.getNumber("TagID", -1)
+        #if (networkTableVisionPipeline.getBoolean("AprilTag", True)):
             
-           
-        if (networkTableVisionPipeline.getBoolean("Driver", True)):
-            switch = 1
-            
-            TargetPixelFromCenter = networkTableVisionReadPipeline.getNumber("TargetPixelFromCenter", -99)
-            yaw = networkTableVisionReadPipeline.getNumber("YawToTarget", -99)
-            distance = networkTableVisionReadPipeline.getNumber("DistanceToTarget", -1)
-            NTOverlayScaleFactor = networkTableVisionReadPipeline.getValue("OverlayScaleFactor",OverlayScaleFactor)
-            
-            processed = DriverOverlay(frame, CameraFOV, NTOverlayScaleFactor, TargetPixelFromCenter, yaw, distance)
-           
+            #TargetPixelFromCenter = networkTableVisionReadPipeline.getNumber("TargetPixelFromCenter", -99)
+           # yaw = networkTableVisionReadPipeline.getNumber("YawToTarget", -99)
+           # distance = networkTableVisionReadPipeline.getNumber("DistanceToTarget", -1)
+           # NTOverlayScaleFactor = networkTableVisionReadPipeline.getValue("OverlayScaleFactor",OverlayScaleFactor)
+        #    processed = findAprilTagCorner(frame, CameraFOV, CameraTiltAngle,MergeVisionPipeLineTableName)
 
-        '''
-        if (networkTableVisionPipeline.getBoolean("Cargo", True)):
-            # Checks if you just want to look for Cargo
-            switch = 3
-#               boxBlur = blurImg(frame, yellow_blur)
-#               threshold = threshold_video(lower_yellow, upper_yellow, boxBlur)
-            if (networkTableVisionPipeline.getBoolean("Red", True)):
-                boxBlur = blurImg(frame, red_blur)
-                threshold = threshold_video(lower_red, upper_red, boxBlur)
-                processed = findCargo(frame, CameraFOV, threshold, MergeVisionPipeLineTableName)
-            elif (networkTableVisionPipeline.getBoolean("Blue", True)):
-                boxBlur = blurImg(frame, blue_blur)
-                threshold = threshold_video(lower_blue, upper_blue, boxBlur)
 
-            if (networkTableVisionPipeline.getBoolean("SendMask", False)):
-                processed = threshold
-            else:   
-                processed = findCargo(frame, CameraFOV, threshold, MergeVisionPipeLineTableName)
-        '''                    
+        if (networkTableVisionPipeline.getBoolean("Intake", True)):
+            processed = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
+            processed = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
+            processed, yaw = findCube(frame, MergeVisionPipeLineTableName,CameraFOV)
+                              
 
         # Puts timestamp of camera on network tables
         networkTableVisionPipeline.putNumber("VideoTimestamp", timestamp)
@@ -588,7 +563,7 @@ if __name__ == "__main__":
         # Resize stream based on the type of stream
         if (OutputStreamWidth != 0):
             processed = cv2.resize(processed,(OutputStreamWidth,OutputStreamHeight),fx=0,fy=0,interpolation=cv2.INTER_CUBIC)
-            streamViewer.frame = processed
+        streamViewer.frame = processed
 
         # Flushes camera values to reduce latency
         ntinst.flush()
