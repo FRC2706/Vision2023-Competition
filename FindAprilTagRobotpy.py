@@ -1,6 +1,6 @@
 #use findtape to find distance
 
-from FindTape import*
+#from FindTape import*
 #from apriltag import apriltag 
 #from pupil_apriltags import Detector
 import robotpy_apriltag
@@ -27,7 +27,8 @@ object_points = np.array(object_points)
 
 # This is the main function initiated from MergeViewer and Merge2023Pipeline
 def findAprilTag(frame, MergeVisionPipeLineTableName):
-     detector, estimator = get_apriltag_detector_and_estimator((1080,1920))
+     #screenHeight, screenWidth, _ = frame.shape
+     detector, estimator = get_apriltag_detector_and_estimator(frame.shape)
      frame = detect_and_process_apriltag(frame, detector, estimator)
      return frame
 
