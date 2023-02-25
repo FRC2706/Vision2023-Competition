@@ -36,7 +36,7 @@ zipObj2.write('VisionMasking.py')
 zipObj2.write('VisionUtilities.py')
 zipObj2.write('NetworkTablePublisher.py')
 zipObj2.write('DriverOverlay.py')
-zipObj2.write('MergeFRCPipeline.py','uploaded.py')
+z,ipObj2.write('MergeFRCPipeline.py','uploaded.py')
 zipObj2.write('pipelineIntake22.json', 'pipelineConfig.json')
 
 zipObj3 = zipfile.ZipFile(FILENAME3, 'w')

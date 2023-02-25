@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import math
+from MergeFRCPipeline import MergeVisionPipeLineTableName
 from VisionUtilities import * 
 from VisionConstants import *
 from DistanceFunctions import *
@@ -36,14 +37,9 @@ def findCube(frame, MergeVisionPipeLineTableName,CameraFOV):
     if len(contours) != 0:
         image,Yaw = findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName)
     # Shows the contours overlayed on the original video
-    cv2.imshow("colourRange", image)
-    cv2.setMouseCallback("colourRange", colourRange, image)
+    #cv2.imshow("colourRange", image)
+    #lcv2.setMouseCallback("colourRange", colourRange, image)
     
-
-
-
-
-
     return image, Yaw
 def colourRange (event, x, y, flags, params):
     if event != cv2.EVENT_LBUTTONDOWN:
@@ -202,3 +198,5 @@ def checkCube(cntArea, image_width,boundingRectContArea):
     #if goodCone:
         #print("cntArea " + str(cntArea) + " IMGWIDTH " + str(image_width) + " BOUNDING rect cont area " + str(boundingRectContArea) + str(goodCone))
     return goodCone
+
+publishNumber(MergeVisionPipeLineTableName, "Game item detection", false)
