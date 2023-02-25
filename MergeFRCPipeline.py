@@ -87,8 +87,9 @@ class WebcamVideoStream:
         self.autoExpose = True
         self.prevValue = True
 
-        self.switchBall = False
+        self.switchAprilTag = False
         self.switchTape = False
+        self.switchIntake = False
         
         # Make a blank image to write on
         self.img = np.zeros(shape=(frameWidth, frameHeight, 3), dtype=np.uint8)
@@ -118,14 +119,17 @@ class WebcamVideoStream:
             if self.stopped:
                 return
 
-            if switch == 1: #driver mode
+            if switch == 1: #AprilTag
                 self.autoExpose = True
-                ##print("Driver mode")
-                if self.autoExpose != self.prevValue:
+                
+                if self.switchAprilTag != True:
                     self.webcam.setExposureManual(60)
-                    self.webcam.setExposureManual(39)
-                    self.webcam.setExposureAuto()
+                    self.webcam.setExposureManual(ExposureAprilTag)
+                    #self.webcam.setExposureAuto()
                     ##print("Driver mode")
+                    self.switchTape = False
+                    self.switchIntake = False
+                    self.switchAprilTag = True
                     self.prevValue = self.autoExpose
              
             elif switch == 2: #Tape Target Mode - set manual exposure to 20
@@ -136,18 +140,20 @@ class WebcamVideoStream:
                     self.webcam.setExposureManual(60)
                     self.webcam.setExposureManual(ExposureTape)
                     self.switchTape = True
-                    self.switchBall = False
+                    self.switchIntake = False
+                    self.switchAprilTag = False
                     #self.prevValue = self.autoExpose
 
-            elif switch == 3: #Cargo Mode - set exposure to 39
+            elif switch == 3: #Intake Mode - set exposure to 39
                 #self.autoExpose = False
                 #if self.autoExpose != self.prevValue:
-                if self.switchBall != True:
-                    self.webcam.setExposureManual(ExposureBall)
+                if self.switchIntake != True:
+                    self.webcam.setExposureManual(ExposureIntake)
                     self.webcam.setExposureManual(39)
                     self.webcam.setExposureAuto()
-                    self.switchBall = True
                     self.switchTape = False
+                    self.switchIntake = True
+                    self.switchAprilTag = False
                     #self.prevValue = self.autoExpose
 
             # gets the image and timestamp from cameraserver
@@ -214,6 +220,8 @@ Intake = data["Intake"]
 AprilTagsEnabled = data["AprilTag"]
 OutputStream = data["OutputStream"]
 ExposureTape = data["ExposureTape"]
+ExposureIntake = data["ExposureIntake"]
+ExposureAprilTag = data["ExposureAprilTag"]
 CameraFOV = data["CameraFOV"]
 CameraTiltAngle = data["CameraTiltAngle"]
 OverlayScaleFactor = data["OverlayScaleFactor"]
