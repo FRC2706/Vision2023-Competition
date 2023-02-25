@@ -15,8 +15,8 @@ diagonalView = math.radians(68.5)
 # below.   That will allow multiple cameras with different resolutions and FOV parameters to be used
 # from the same pipeline code.
 
-image_width = 1280 # 16  
-image_height = 720 # 9 
+image_width = 320 # 16  
+image_height = 180 # 9 
 
 #To calculate the aspect ratio, first find the greatest common divisor between the
 # #image height and image width of the camera
