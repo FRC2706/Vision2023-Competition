@@ -29,6 +29,7 @@ import math
 # Imports EVERYTHING from these files
 from FindTape import *
 from FindAprilTagRobotpy import *
+#from FindAprilTag import *
 from FindCube import *
 from FindCone import *
 from DetectIntakeItem import *
@@ -516,7 +517,7 @@ if __name__ == "__main__":
            # yaw = networkTableVisionReadPipeline.getNumber("YawToTarget", -99)
            # distance = networkTableVisionReadPipeline.getNumber("DistanceToTarget", -1)
            # NTOverlayScaleFactor = networkTableVisionReadPipeline.getValue("OverlayScaleFactor",OverlayScaleFactor)
-           processed = findAprilTagRobotpy(frame, MergeVisionPipeLineTableName )
+           processed = findAprilTag(frame, MergeVisionPipeLineTableName )
 
 
         if (networkTableVisionPipeline.getBoolean("Intake", True)):

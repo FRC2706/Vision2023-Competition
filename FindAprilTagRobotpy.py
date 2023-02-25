@@ -26,7 +26,7 @@ object_points.append(  [float(-marker_size / 2),float(-marker_size / 2), 0])
 object_points = np.array(object_points)
 
 # This is the main function initiated from MergeViewer and Merge2023Pipeline
-def findAprilTagRobotpy(frame, MergeVisionPipeLineTableName):
+def findAprilTag(frame, MergeVisionPipeLineTableName):
      detector, estimator = get_apriltag_detector_and_estimator((1080,1920))
      frame = detect_and_process_apriltag(frame, detector, estimator)
      return frame
