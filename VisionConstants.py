@@ -95,7 +95,7 @@ red_blur = 1
 blue_blur = 1
 
 # define colors
-purple = (165, 0, 180)
+purple = (190, 0, 210)
 blue = (255, 0, 0)
 green = (0, 255, 0)
 red = (0, 0, 255)
@@ -122,8 +122,8 @@ upper_red = np.array([180,255,255])
 lower_blue = np.array([64,127,116]) 
 upper_blue = np.array([115,213,255]) 
 
-lower_purple = np.array([99,2,49]) 
-upper_purple = np.array([182,196,213]) 
+lower_purple = np.array([115,60,60]) 
+upper_purple = np.array([135,190,165]) 
 
 lower_white = np.array([240,240,240]) 
 upper_white = np.array([255,255,255]) 

@@ -48,14 +48,12 @@ def findCube(frame, MergeVisionPipeLineTableName,CameraFOV):
 def colourRange (event, x, y, flags, params):
     if event != cv2.EVENT_LBUTTONDOWN:
         return
-    
-    blueValue = params[y,x,0]
-    greenValue = params[y,x,1]
-    redValue = params[y,x,2]
+    hsv = cv2.cvtColor(params, cv2.COLOR_BGR2HSV)
+    hValue = hsv[y,x,0]
+    sValue = hsv[y,x,1]
+    vValue = hsv[y,x,2]
 
-    print(str(blueValue))
-    print(str(greenValue))
-    print(str(redValue))
+    print(str(hValue)+","+str(sValue)+","+str(vValue))
     return
 def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
     screenHeight, screenWidth, channels = image.shape
@@ -200,7 +198,7 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
 
 # Checks if cone contours are worthy based off of contour area and (not currently) hull area
 def checkCube(cntArea, image_width,boundingRectContArea):
-    goodCone = (boundingRectContArea < 0.7) and (boundingRectContArea > 0.35)
+    goodCone = (boundingRectContArea > 0.5)
     #if goodCone:
         #print("cntArea " + str(cntArea) + " IMGWIDTH " + str(image_width) + " BOUNDING rect cont area " + str(boundingRectContArea) + str(goodCone))
     return goodCone
