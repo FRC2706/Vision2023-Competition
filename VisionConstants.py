@@ -122,8 +122,8 @@ upper_red = np.array([180,255,255])
 lower_blue = np.array([64,127,116]) 
 upper_blue = np.array([115,213,255]) 
 
-lower_purple = np.array([99,2,49]) 
-upper_purple = np.array([182,196,213]) 
+lower_purple = np.array([115,60,45]) 
+upper_purple = np.array([135,200,165]) 
 
 lower_white = np.array([240,240,240]) 
 upper_white = np.array([255,255,255]) 
