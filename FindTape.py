@@ -295,7 +295,6 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                #rect = cv2.boundingRect(cnt)
                 (xr,yr),(wr,hr),ar = rect #x,y width, height, angle of rotation = rotated rect
 
-               # print("Area: " + ar)
 
                 x, y, w, h = cv2.boundingRect(cnt)
                 #cv2.rectangle(image,(x,y),(x+w,y+h),(0, 255, 255),1)
@@ -303,30 +302,21 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
 
                 percentfill = (cntArea/(w*h))
 
-                print("cntArea: " , cntArea)
-                print("percent fill: ",(cntArea/(w*h)) )
 
                 total_screen_pixels = screenHeight * screenWidth
                 percent_contour_area = cntArea/total_screen_pixels *100
 
                 #Filter based on too large contour 
                 # if cntArea > 2500 or cntArea < 440: continue
-                print('percent contour:', percent_contour_area)
  
                 #Filter based on too small contour
                 if (percent_contour_area < 0.05): continue
 
-                print("percentfill:", percentfill)
                 # Filter based on percent fill
                 if (percentfill < 0.5): continue 
 
                 # Filter based on Angle of rotation 
 
-                #print("AR:" , ar)
-                #print("X: " , x)
-                #print("Y: " , y)
-                #print("W: " , w)
-                #print("H: " , h)
 
                 #to get rid of height and width switching
                 if hr > wr: 
@@ -341,13 +331,10 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                 cntMinAreaAR = float(wr)/hr
                 cntBoundRectAR = float(w)/h
 
-                print ("cntBoundRectAR: " , cntBoundRectAR)
-                print ("cntMinAreaAR: " , cntMinAreaAR)
 
                 # Filter based on aspect ratio (previous values: 2-3)
                 #Tape is 13 cm wide by 5 cm high - that gives aspect ration of 2.6
                 #To be flexible, lets accept (1.9 - 3.3) range 
-                print("aspect ratio:", cntBoundRectAR)
                 if (cntBoundRectAR < 0.2 or cntBoundRectAR > 0.8): continue 
 
                 cv2.rectangle(image,(x,y),(x+w,y+h),(0, 0, 255),1)
@@ -372,7 +359,6 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
             # We will work on the filtered contour with the largest area which is the
             # first one in the list
             if (len(cntsFiltered) > 0):
-                print("hi")
                 #Used to hold the 4 contour Corners
                 contourCorners = []
 
@@ -395,7 +381,6 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                     cnt = cntsFiltered[i][0]
                     cntArea = cntsFiltered[i][1]
 
-                    print("first target: ", cnt)
                     M = cv2.moments(cnt)
                     if M["m00"] != 0:
                         cx = int(M["m10"] / M["m00"])
@@ -403,7 +388,6 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                     else:
                         cx = 0
                         cy = 0
-                    print(cx)
 
                   # limit contour to quadrilateral
                     peri = cv2.arcLength(cnt, True)
@@ -442,7 +426,6 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                     #Calculate the Center of each Contour                    
                     
                     final_center += cx
-                    print(final_center)
 
                     #find average Area
                     average_area += cntArea
