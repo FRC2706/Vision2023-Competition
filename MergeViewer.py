@@ -39,7 +39,7 @@ from DetectIntakeItem import *
 from FindCube import *
 from FindCone import *
 from FindTape import *
-#from FindAprilTag import *
+from FindAprilTagRobotpy import *
 
 print()
 print("--- Merge Viewer Starting ---")
@@ -59,11 +59,11 @@ useWebCam = False
 webCamNumber = 1
 
 # ADJUST DESIRED TARGET BASED ON VIDEO OR FILES ABOVE !!!
-Tape = True
+Tape = False
 Cone = False
 Cube = False
 Intake = False
-AprilTag = False
+AprilTag = True
 CameraFOV = 68.5
 CameraTiltAngle = 30
 OverlayScaleFactor = 1
@@ -104,8 +104,8 @@ else:  # implies images are to be read
 
     # Outer Target Images
     #images, imagename = load_images_from_folder("./2023VisionSampleImages/RetroTape")
-    images, imagename = load_images_from_folder("/Users/johngray/FRC/Vision2023-Competition/2023VisionSampleImages/RetroTape")
-    #/Users/johngray/FRC/Vision2023-Competition/
+    #images, imagename = load_images_from_folder("/Users/johngray/FRC/Vision2023-Competition/2023VisionSampleImages/RetroTape")
+    images, imagename = load_images_from_folder("./2023VisionSampleImages/AprilTags")
     #images, imagename = load_images_from_folder("./HubImgSketchup")
     print(imagename)
 
@@ -187,7 +187,7 @@ while stayInLoop or cap.isOpened():
         processed, yaw = findCube(frame, MergeVisionPipeLineTableName,CameraFOV)
 
     if AprilTag:
-        print("This should run the AprilTags Code")
+        processed = findAprilTagRobotpy(frame, MergeVisionPipeLineTableName )
 
        # if AprilTag:
         #    findAprilTag(frame, CameF)
