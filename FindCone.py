@@ -48,12 +48,12 @@ def findCone(frame, MergeVisionPipeLineTableName,CameraFOV):
     if len(contours) != 0:    
         # Sort contours by area size (biggest to smallest)
         cntsSorted = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)[:5]#what is this 5?
-        image,Yaw = findCones(cntsSorted, image,CameraFOV,)
+        image,Yaw = findCones(cntsSorted, image,CameraFOV)
     # Shows the contours overlayed on the original video
         publishNumber(MergeVisionPipeLineTableName, "YawToCone", Yaw)
     return image, Yaw
 
-def findCones(cntsSorted, image,CameraFOV,):
+def findCones(cntsSorted, image,CameraFOV):
     screenHeight, screenWidth, _ = image.shape
     # Gets center of width
     centerX = (screenWidth / 2) - .5
@@ -70,13 +70,13 @@ def findCones(cntsSorted, image,CameraFOV,):
         ##print("Area of bounding rec: " + str(boundingRectArea))
         # Calculate Contour area
         cntArea = cv2.contourArea(cnt)
-        print("Area of contour: " + str(cntArea))
+        #print("Area of contour: " + str(cntArea))
         #calculate area of a cone standing up at that size
         expectedArea = (w*h/2)
-        print("expected area: " + str(expectedArea))
+        #print("expected area: " + str(expectedArea))
         #percentage of contour in area of a cone standing up at that size
         expectedAreaContArea = float(cntArea/expectedArea)
-        print("percentage of contour in area of a cone standing up at that size: " + str(expectedAreaContArea))
+        #print("percentage of contour in area of a cone standing up at that size: " + str(expectedAreaContArea))
 
         #find the height of the bottom (y position of contour)
         # which is just the y value plus the height
