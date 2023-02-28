@@ -15,3 +15,10 @@ def publishString(MergeVisionPipeLineTableName,name, Strvalue):
     networktable = ntinst.getTable(MergeVisionPipeLineTableName)
     networktable.putString(name, Strvalue)
     #print(name+ ": " + str(value))    
+
+def publishNumberArray(MergeVisionPipeLineTableName,name, numarray):
+    #start NetworkTables
+    ntinst = NetworkTableInstance.getDefault()
+    # Name of network table - this is how it communicates with robot. IMPORTANT
+    networktable = ntinst.getTable(MergeVisionPipeLineTableName)
+    networktable.putNumberArray(numarray)    
