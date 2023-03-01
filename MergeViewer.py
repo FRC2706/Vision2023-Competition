@@ -62,8 +62,8 @@ webCamNumber = 1
 Tape = False
 Cone = False
 Cube = False
-Intake = False
-AprilTag = True
+Intake = True
+AprilTag = False
 CameraFOV = 68.5
 CameraTiltAngle = 30
 OverlayScaleFactor = 1
@@ -187,7 +187,7 @@ while stayInLoop or cap.isOpened():
         processed, yaw = findCube(frame, MergeVisionPipeLineTableName,CameraFOV)
 
     if AprilTag:
-        processed = findAprilTagRobotpy(frame, MergeVisionPipeLineTableName )
+        processed = FindAprilTagRobotpy(frame, MergeVisionPipeLineTableName )
 
        # if AprilTag:
         #    findAprilTag(frame, CameF)
@@ -224,8 +224,8 @@ while stayInLoop or cap.isOpened():
     if (showAverageFPS): 
         cv2.putText(processed, 'Grouped FPS: {:.2f}'.format(1000/(displayFPS)), (20, 20), cv2.FONT_HERSHEY_COMPLEX, 0.6 ,white)
         cv2.putText(processed, 'Average FPS: {:.2f}'.format(averageFPS), (20, 50), cv2.FONT_HERSHEY_COMPLEX, 0.6 ,white)
-    else:
-        cv2.putText(processed, 'Grouped FPS: {:.2f}'.format(1000/(displayFPS)), (20, 20), cv2.FONT_HERSHEY_COMPLEX, 0.6 ,white)
+    #else:
+        #cv2.putText(processed, 'Grouped FPS: {:.2f}'.format(1000/(displayFPS)), (20, 20), cv2.FONT_HERSHEY_COMPLEX, 0.6 ,white)
 
     cv2.imshow("raw", frame)
     cv2.setMouseCallback('raw', draw_circle)

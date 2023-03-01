@@ -66,7 +66,7 @@ def draw_tag(frame, result):
     assert frame is not None
     assert result is not None
     tag_id, pose, center = result
-    print(center)
+    #print(center)
     cv2.circle(frame, (int(center.x), int(center.y)), 50, (255, 0, 255), 3)
     msg = f"Tag ID: {tag_id} Pose: {pose}"
     cv2.putText(frame, msg, (100, 50 * 1), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
