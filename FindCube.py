@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import math
+from MergeFRCPipeline import MergeVisionPipeLineTableName
 from VisionUtilities import * 
 from VisionConstants import *
 from DistanceFunctions import *
@@ -36,8 +37,20 @@ def findCube(frame, MergeVisionPipeLineTableName,CameraFOV):
     if len(contours) != 0:
         image,Yaw = findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName)
     # Shows the contours overlayed on the original video
+    #cv2.imshow("colourRange", image)
+    #lcv2.setMouseCallback("colourRange", colourRange, image)
+    
     return image, Yaw
+def colourRange (event, x, y, flags, params):
+    if event != cv2.EVENT_LBUTTONDOWN:
+        return
+    hsv = cv2.cvtColor(params, cv2.COLOR_BGR2HSV)
+    hValue = hsv[y,x,0]
+    sValue = hsv[y,x,1]
+    vValue = hsv[y,x,2]
 
+    print(str(hValue)+","+str(sValue)+","+str(vValue))
+    return
 def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
     screenHeight, screenWidth, channels = image.shape
     # Gets center of width
@@ -96,7 +109,7 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
                 #box = np.int0(box)
                    
                 # Draws a vertical white line passing through center of contour
-                cv2.line(image, (cx, screenHeight), (cx, 0), white)
+                cv2.line(image, (cx, screenHeight), (cx, 0), purple,5)
 
                 # Draws the contours
                 #cv2.drawContours(image, [cnt], 0, green, 2)
@@ -111,7 +124,6 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
 
         # Check if there are Cone seen
         if (len(BiggestCube) > 0):
-            print("yes")
             # copy
             tallestCone = BiggestCube
 
@@ -133,7 +145,7 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
             # draw extreme points
             # from https://www.pyimagesearch.com/2016/04/11/finding-extreme-points-in-contours-with-opencv/
             #cv2.circle(image, topmost, 6, white, -1)
-            cv2.circle(image, bottommost, 6, blue, -1)
+            #cv2.circle(image, bottommost, 6, blue, -1)
             ##print('extreme points', leftmost,rightmost,topmost,bottommost)
 
             #print("topmost: " + str(topmost[0]))
@@ -164,12 +176,10 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
             # Puts the yaw on screen
             # Draws yaw of target + line where center of target is
             #finalYaw = round(finalTarget[1]*1000)/1000
-            cv2.putText(image, "Yaw: " + str(finalTarget[0]), (40, 150), cv2.FONT_HERSHEY_COMPLEX, .6,
-                        white)
-            cv2.line(image, (xCoord, screenHeight), (xCoord, 0), blue, 2)
+            #cv2.putText(image, "Yaw: " + str(finalTarget[0]), (40, 150), cv2.FONT_HERSHEY_COMPLEX, .6, purple)
+            #cv2.line(image, (xCoord, screenHeight), (xCoord, 0), blue, 2)
 
-            cv2.putText(image, "cxYaw (Used): " + str(finalTarget[2]), (40, 175), cv2.FONT_HERSHEY_COMPLEX, .6,
-                        white)
+            #cv2.putText(image, "cxYaw (Used): " + str(finalTarget[2]), (40, 175), cv2.FONT_HERSHEY_COMPLEX, .6, white)
 
             # pushes Cone angle to network tables
             #publishNumber(MergeVisionPipeLineTableName, "YawToCone", finalTarget[0])
@@ -178,13 +188,13 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
         else:
             finalTarget = [0,0,0]
 
-        cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), white, 2)
+        #cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), white, 5)
 
         return image, finalTarget[2]
 
 # Checks if cone contours are worthy based off of contour area and (not currently) hull area
 def checkCube(cntArea, image_width,boundingRectContArea):
-    goodCone = (boundingRectContArea < 0.7) and (boundingRectContArea > 0.35)
+    goodCone = (boundingRectContArea > 0.5)
     #if goodCone:
         #print("cntArea " + str(cntArea) + " IMGWIDTH " + str(image_width) + " BOUNDING rect cont area " + str(boundingRectContArea) + str(goodCone))
     return goodCone
