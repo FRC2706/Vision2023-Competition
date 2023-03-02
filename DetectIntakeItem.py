@@ -62,6 +62,17 @@ def DetectIntakeItem(frame, MergeVisionPipeLineTableName):
     #publishNumber(MergeVisionPipeLineTableName, "CargoCentroid1Yaw", finalTarget[2])
     #cv2.line(image, (round(x), round(y)), (round(x+w), round(y+h)), white, 2)
     #cv2.imshow("area",image)
+    
+    if FoundYellow:
+        publishBoolean(MergeVisionPipeLineTableName, "DetectCone", True)
+    elif FoundPurple:
+        publishBoolean(MergeVisionPipeLineTableName, "DetectCube", True)
+    elif FoundPurple & FoundYellow:
+        publishBoolean(MergeVisionPipeLineTableName, "DetectCone", True)
+        publishBoolean(MergeVisionPipeLineTableName, "DetectCube", True)
+    else:
+        publishBoolean(MergeVisionPipeLineTableName, "DetectCone", False)
+        publishBoolean(MergeVisionPipeLineTableName, "DetectCube", False)
     return frame
 
 def FindRectFillAmount(image,contours,x,y,w,h):
