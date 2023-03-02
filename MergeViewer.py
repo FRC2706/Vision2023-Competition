@@ -39,7 +39,7 @@ from DetectIntakeItem import *
 from FindCube import *
 from FindCone import *
 from FindTape import *
-from FindAprilTagRobotpy import *
+#from FindAprilTagRobotpy import *
 
 print()
 print("--- Merge Viewer Starting ---")
@@ -177,12 +177,12 @@ while stayInLoop or cap.isOpened():
     
     if Intake:
         processed = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
-        processed = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
-        processed, yaw = findCube(processed, MergeVisionPipeLineTableName,CameraFOV)
+        processed, yaw = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
+        processed, yaw = findCube(frame, MergeVisionPipeLineTableName,CameraFOV)
 
 
     if Cone:
-        processed = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
+        processed, yaw = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
 
     if Cube: 
         processed, yaw = findCube(frame, MergeVisionPipeLineTableName,CameraFOV)
