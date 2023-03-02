@@ -21,7 +21,7 @@ except ImportError:
 # Finds the balls from the masked image and displays them on original stream + network tables
 def findCube(frame, MergeVisionPipeLineTableName,CameraFOV):
     # Copies frame and stores it in image
-    image = frame.copy()
+    image = frame
     #Create a purple mask
     MaskPurple = threshold_video(lower_purple, upper_purple, image)
     #find the contours of the mask 

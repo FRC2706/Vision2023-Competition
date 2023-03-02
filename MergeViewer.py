@@ -177,8 +177,9 @@ while stayInLoop or cap.isOpened():
     
     if Intake:
         processed = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
-        #processed = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
-        #processed, yaw = findCube(frame, MergeVisionPipeLineTableName,CameraFOV)
+        processed = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
+        processed, yaw = findCube(processed, MergeVisionPipeLineTableName,CameraFOV)
+
 
     if Cone:
         processed = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
@@ -186,8 +187,8 @@ while stayInLoop or cap.isOpened():
     if Cube: 
         processed, yaw = findCube(frame, MergeVisionPipeLineTableName,CameraFOV)
 
-    if AprilTag:
-        processed = FindAprilTagRobotpy(frame, MergeVisionPipeLineTableName )
+    #if AprilTag:
+        #processed = FindAprilTagRobotpy(frame, MergeVisionPipeLineTableName )
 
        # if AprilTag:
         #    findAprilTag(frame, CameF)

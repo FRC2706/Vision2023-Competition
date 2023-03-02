@@ -21,7 +21,7 @@ except ImportError:
 # Finds the balls from the masked image and displays them on original stream + network tables
 def findCone(frame, MergeVisionPipeLineTableName,CameraFOV):
     # Copies frame and stores it in image
-    image = frame.copy()
+    image = frame
     #Create a yellow mask
     MaskYellow = threshold_video(lower_yellow, upper_yellow, image)
 
