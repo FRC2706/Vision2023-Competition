@@ -524,12 +524,10 @@ if __name__ == "__main__":
             processed = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
             processed, yaw_cone = findCone(processed, MergeVisionPipeLineTableName,CameraFOV)
             processed, yaw_cube = findCube(processed, MergeVisionPipeLineTableName,CameraFOV)
-            if yaw_cone > yaw_cube:
-                publishNumber (MergeVisionPipeLineTableName, "Yaw", yaw_cube)
-            elif yaw_cone < yaw_cube:
+            if yaw_cone < yaw_cube:
                 publishNumber (MergeVisionPipeLineTableName, "Yaw", yaw_cone)
             else:
-                publishNumber (MergeVisionPipeLineTableName, "Yaw", 10000)
+                publishNumber (MergeVisionPipeLineTableName, "Yaw", yaw_cube)
 
                               
 
