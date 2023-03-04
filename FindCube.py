@@ -179,6 +179,20 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
 
         return image, finalTarget[2]
 
+def compute_output_values(rvec, tvec, cameraTiltAngle):
+    '''Compute the necessary output distance and angles'''
+
+    # The tilt angle only affects the distance and angle1 calcs
+    # This is a major impact on calculations
+    tilt_angle = math.radians(cameraTiltAngle)
+
+    x = tvec[0][0]
+    z = math.sin(tilt_angle) * tvec[1][0] + math.cos(tilt_angle) * tvec[2][0]
+
+    # distance in the horizontal plane between camera and target
+    distance_cube = math.sqrt(x**2 + z**2)
+    return distance_cube
+
 # Checks if cone contours are worthy based off of contour area and (not currently) hull area
 def checkCube(cntArea, image_width,boundingRectContArea):
     goodCone = (boundingRectContArea > 0.5)

@@ -50,7 +50,7 @@ def findCone(frame, MergeVisionPipeLineTableName,CameraFOV):
         cntsSorted = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)[:5]#what is this 5?
         image,Yaw = findCones(cntsSorted, image, CameraFOV,)
         # Shows the contours overlayed on the original video
-        publishNumber(MergeVisionPipeLineTableName, "YawToCone", Yaw)
+        
     return image, Yaw
 
 def findCones(cntsSorted, image, CameraFOV):
@@ -183,6 +183,20 @@ def findCones(cntsSorted, image, CameraFOV):
         cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), white, 5)
 
         return image, finalTarget[2]
+def compute_output_values(rvec, tvec, cameraTiltAngle):
+    '''Compute the necessary output distance and angles'''
+
+    # The tilt angle only affects the distance and angle1 calcs
+    # This is a major impact on calculations
+    tilt_angle = math.radians(cameraTiltAngle)
+
+    x = tvec[0][0]
+    z = math.sin(tilt_angle) * tvec[1][0] + math.cos(tilt_angle) * tvec[2][0]
+
+    # distance in the horizontal plane between camera and target
+    distance_cone = math.sqrt(x**2 + z**2)
+    return distance_cone
+
 
 # Checks if cone contours are worthy based off of contour area and (not currently) hull area
 def checkCone(cntArea, expectedAreaContArea):
