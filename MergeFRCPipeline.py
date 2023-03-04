@@ -28,7 +28,10 @@ import math
 
 # Imports EVERYTHING from these files
 from FindTape import *
+<<<<<<< HEAD
 from FindAprilTagRobotpy import *
+=======
+>>>>>>> pat
 #from FindAprilTag import *
 from FindCube import *
 from FindCone import *
@@ -184,6 +187,7 @@ ImageCounter = 0
 # Masks the video based on a range of hsv colors
 # Takes in a frame, range of color, and a blurred frame, returns a masked frame
 def threshold_video(lower_color, upper_color, blur):
+
     # Convert BGR to HSV
     hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
     h, s, v = cv2.split(hsv)
@@ -221,8 +225,11 @@ Intake = data["Intake"]
 AprilTagsEnabled = data["AprilTag"]
 OutputStream = data["OutputStream"]
 ExposureTape = data["ExposureTape"]
+<<<<<<< HEAD
 ExposureIntake = data["ExposureIntake"]
 ExposureAprilTag = data["ExposureAprilTag"]
+=======
+>>>>>>> pat
 CameraFOV = data["CameraFOV"]
 CameraTiltAngle = data["CameraTiltAngle"]
 OverlayScaleFactor = data["OverlayScaleFactor"]
@@ -511,8 +518,18 @@ if __name__ == "__main__":
                 if rpm != 0:
                     cv2.putText(processed, "RPM: " + str(round(rpm,2)), (20, 340), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
 
+<<<<<<< HEAD
         if (networkTableVisionPipeline.getBoolean("AprilTag", True)):
            processed, tag_id, tvec, center = findAprilTag(frame, MergeVisionPipeLineTableName)
+=======
+        #if (networkTableVisionPipeline.getBoolean("AprilTag", True)):
+            
+            #TargetPixelFromCenter = networkTableVisionReadPipeline.getNumber("TargetPixelFromCenter", -99)
+           # yaw = networkTableVisionReadPipeline.getNumber("YawToTarget", -99)
+           # distance = networkTableVisionReadPipeline.getNumber("DistanceToTarget", -1)
+           # NTOverlayScaleFactor = networkTableVisionReadPipeline.getValue("OverlayScaleFactor",OverlayScaleFactor)
+        #    processed = findAprilTagCorner(frame, CameraFOV, CameraTiltAngle,MergeVisionPipeLineTableName)
+>>>>>>> pat
 
 
         if (networkTableVisionPipeline.getBoolean("Intake", True)):

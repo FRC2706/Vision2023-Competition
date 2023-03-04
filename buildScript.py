@@ -1,8 +1,14 @@
 import zipfile
 
+<<<<<<< HEAD
 FILENAME = "visionTape21.zip"
 FILENAME2 = "visionIntake22.zip"
 FILENAME3 = "visionAprilTag23.zip"
+=======
+FILENAME = "visionCompPi21.zip"
+FILENAME2 = "visionCompPi22.zip"
+FILENAME3 = "visionCompPi23.zip"
+>>>>>>> pat
 
 #create a ZipFile object
 zipObj = zipfile.ZipFile(FILENAME, 'w')
@@ -56,6 +62,10 @@ zipObj3.write('VisionUtilities.py')
 zipObj3.write('NetworkTablePublisher.py')
 zipObj3.write('DriverOverlay.py')
 zipObj3.write('MergeFRCPipeline.py','uploaded.py')
+<<<<<<< HEAD
 zipObj3.write('pipelineAprilTag23.json', 'pipelineConfig.json')
+=======
+zipObj3.write('pipelineAprilTags23.json', 'pipelineConfig.json')
+>>>>>>> pat
 
-print("I have wrote the file: " + FILENAME + ", " + FILENAME2 + ", " + FILENAME3)
+print("I have written the file: " + FILENAME + ", " + FILENAME2 + ", " + FILENAME3)

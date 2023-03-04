@@ -1,10 +1,16 @@
 {
+<<<<<<< HEAD
     "networkTableName": "MergeVisionPipelineIntake22",
     "networkTableReadName": "MergeVisionPipelineTape21",
+=======
+    "networkTableName": "MergeVisionPipelinePi22",
+    "networkTableReadName": "MergeVisionPipelinePi21",
+>>>>>>> pat
     "Driver": false,
     "Tape": false,
     "AprilTag": false,
     "Intake": true,
+<<<<<<< HEAD
     "OutputStream": "2706Intake",
     "ExposureTape": 40,
     "ExposureIntake": 100,
@@ -15,4 +21,21 @@
     "OutputStreamWidth": 320,
     "OutputStreamHeight": 180,
     "CameraRotation": true
+=======
+    "OutputStream": "2706_out_target",
+    "ExposureTarget": 40,
+    "ExposureAprilTag": 100,
+    "ExposureIntake": 100,
+    "CameraFOV": 68.5,
+    "CameraTiltAngle": 35,
+    "OverlayScaleFactor": 0.2,
+<<<<<<< Updated upstream
+    "OutputStreamWidth": 320,
+    "OutputStreamHeight": 160
+=======
+    "OutputStreamWidth": 640,
+    "OutputStreamHeight": 360,
+    "CameraRotation": true
+>>>>>>> Stashed changes
+>>>>>>> pat
 }
