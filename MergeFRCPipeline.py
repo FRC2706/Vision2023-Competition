@@ -232,13 +232,13 @@ CameraRotation = data["CameraRotation"]
 
 
 if Intake:
-    switch = 1
+    switch = 3
 
 elif TapeEnabled:
     switch = 2
 
 elif AprilTagsEnabled:
-    switch = 3
+    switch = 1
 
 class CameraConfig: pass
 
