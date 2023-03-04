@@ -176,7 +176,7 @@ while stayInLoop or cap.isOpened():
         processed, TargetPixelFromCenter, YawToTarget, distance = findTargets(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
     
     if Intake:
-        #processed = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
+        processed = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
         processed, Yaw = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
         processed, yaw = findCube(processed, MergeVisionPipeLineTableName,CameraFOV)
 

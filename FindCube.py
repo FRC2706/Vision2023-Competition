@@ -58,17 +58,17 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
         ##print("Area of bounding rec: " + str(boundingRectArea))
         # Calculate Contour area
         cntArea = cv2.contourArea(cnt)
-        print("Area of contour: " + str(cntArea))
+        #print("Area of contour: " + str(cntArea))
         #calculate area of a cone standing up at that size
         expectedArea = (w*h/1.5)
-        print("expected area: " + str(expectedArea))
+        #print("expected area: " + str(expectedArea))
 
         #percentage of contour in bounding rect
         boundingRectContArea = float(cntArea/boundingRectArea)
         #print("Percentage contour area in bounding rect: " + str(boundingRectContArea))
         #percentage of contour in area of a cone standing up at that size
         expectedAreaContArea = float(cntArea/expectedArea)
-        print("percentage of contour in area of a Cube at that size: " + str(expectedAreaContArea))
+        #print("percentage of contour in area of a Cube at that size: " + str(expectedAreaContArea))
 
         #find the height of the bottom (y position of contour)
         # which is just the y value plus the height
@@ -176,6 +176,7 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
             finalTarget = [0,0,0]
 
         #cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), white, 2)
+
 
         return image, finalTarget[2]
 

@@ -501,7 +501,7 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                      #print("Final_Center: ", final_center)
                      #print("Average_AREA: ", average_area)
 
-                     success, rvec, tvec = findTvecRvec(image, outer_corners, real_world_coordinates,H_FOCAL_LENGTH,V_FOCAL_LENGTH) 
+                     success, rvec,tvec  = findTvecRvec(image, outer_corners, real_world_coordinates,H_FOCAL_LENGTH,V_FOCAL_LENGTH) 
                     
                 cv2.putText(image, "TargetYaw: " + str(YawToTarget), (20, 100), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
                 #cv2.putText(image, "Average Area: " + str(average_area), (20, 240), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
