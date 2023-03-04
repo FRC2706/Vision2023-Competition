@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import math
+from MergeFRCPipeline import CameraTiltAngle
 from VisionUtilities import * 
 from VisionConstants import *
 from DistanceFunctions import *
@@ -18,8 +19,27 @@ except ImportError:
 # centerX is center x coordinate of image
 # MergeVisionPipeLineTableName is the Network Table destination for yaw and distance
 
+def compute_output_values( tvec, cameraTiltAngle):
+    '''Compute the necessary output distance and angles'''
+
+    # The tilt angle only affects the distance and angle1 calcs
+    # This is a major impact on calculations
+    tilt_angle = math.radians(cameraTiltAngle)
+
+    x = tvec[0][0]
+    z = math.sin(tilt_angle) * tvec[1][0] + math.cos(tilt_angle) * tvec[2][0]
+
+    # distance in the horizontal plane between camera and target
+    distance_cone = math.sqrt(x**2 + z**2)
+    print(distance_cone)
+    return distance_cone
+
 # Finds the balls from the masked image and displays them on original stream + network tables
 def findCone(frame, MergeVisionPipeLineTableName,CameraFOV):
+    tvec = findTvecRvec(image,H_FOCAL_LENGTH,V_FOCAL_LENGTH) 
+    distance_cone= compute_output_values(tvec, CameraTiltAngle)           
+                    
+
     # Copies frame and stores it in image
     image = frame.copy()
     #Create a yellow mask
@@ -183,19 +203,6 @@ def findCones(cntsSorted, image, CameraFOV):
         cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), white, 5)
 
         return image, finalTarget[2]
-def compute_output_values(rvec, tvec, cameraTiltAngle):
-    '''Compute the necessary output distance and angles'''
-
-    # The tilt angle only affects the distance and angle1 calcs
-    # This is a major impact on calculations
-    tilt_angle = math.radians(cameraTiltAngle)
-
-    x = tvec[0][0]
-    z = math.sin(tilt_angle) * tvec[1][0] + math.cos(tilt_angle) * tvec[2][0]
-
-    # distance in the horizontal plane between camera and target
-    distance_cone = math.sqrt(x**2 + z**2)
-    return distance_cone
 
 
 # Checks if cone contours are worthy based off of contour area and (not currently) hull area

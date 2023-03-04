@@ -179,7 +179,7 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
 
         return image, finalTarget[2]
 
-def compute_output_values(rvec, tvec, cameraTiltAngle):
+def compute_output_values( tvec, cameraTiltAngle):
     '''Compute the necessary output distance and angles'''
 
     # The tilt angle only affects the distance and angle1 calcs
