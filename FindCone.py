@@ -25,7 +25,7 @@ def compute_output_values(tvec, cameraTiltAngle):
     # This is a major impact on calculations
     tilt_angle = math.radians(cameraTiltAngle)
 
-    x = tvec
+    x = tvec[0][0]
     z = math.sin(tilt_angle) * tvec[1][0] + math.cos(tilt_angle) * tvec[2][0]
 
     # distance in the horizontal plane between camera and target
