@@ -504,7 +504,7 @@ if __name__ == "__main__":
             if (networkTableVisionPipeline.getBoolean("SendMask", False)):
                 processed = threshold
             else:    
-                processed, final_center, YawToTarget, distance = findTargets(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
+                processed, final_center, YawToTarget, distance = findTape(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
 
                 #Read RPM From Network Table
                 rpm = networkTableVisionPipeline.getNumber("RPM", 0)
@@ -512,12 +512,7 @@ if __name__ == "__main__":
                     cv2.putText(processed, "RPM: " + str(round(rpm,2)), (20, 340), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
 
         if (networkTableVisionPipeline.getBoolean("AprilTag", True)):
-            
-            #TargetPixelFromCenter = networkTableVisionReadPipeline.getNumber("TargetPixelFromCenter", -99)
-           # yaw = networkTableVisionReadPipeline.getNumber("YawToTarget", -99)
-           # distance = networkTableVisionReadPipeline.getNumber("DistanceToTarget", -1)
-           # NTOverlayScaleFactor = networkTableVisionReadPipeline.getValue("OverlayScaleFactor",OverlayScaleFactor)
-           processed = findAprilTag(frame, MergeVisionPipeLineTableName )
+           processed, tag_id, tvec, center = findAprilTag(frame, MergeVisionPipeLineTableName)
 
 
         if (networkTableVisionPipeline.getBoolean("Intake", True)):

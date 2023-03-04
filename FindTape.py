@@ -32,7 +32,7 @@ real_world_coordinates = np.array([
 MAXIMUM_TARGET_AREA = 4400
 
 # Finds the tape targets from the masked image and displays them on original stream + network tales
-def findTargets(frame, cameraFOV, CameraTiltAngle, mask, MergeVisionPipeLineTableName, past_distances):
+def findTape(frame, cameraFOV, CameraTiltAngle, mask, MergeVisionPipeLineTableName, past_distances):
 
     
     # Taking a matrix of size 5 as the kernel 

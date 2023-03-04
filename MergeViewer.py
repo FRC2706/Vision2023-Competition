@@ -173,7 +173,7 @@ while stayInLoop or cap.isOpened():
 
     if Tape:
         threshold = threshold_video(lower_green, upper_green, frame)
-        processed, TargetPixelFromCenter, YawToTarget, distance = findTargets(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
+        processed, TargetPixelFromCenter, YawToTarget, distance = findTape(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
     
     if Intake:
         processed = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
@@ -187,7 +187,7 @@ while stayInLoop or cap.isOpened():
         processed, yaw = findCube(frame, MergeVisionPipeLineTableName,CameraFOV)
 
     if AprilTag:
-        processed = findAprilTagRobotpy(frame, MergeVisionPipeLineTableName )
+        processed, a, b, c = findAprilTag(frame, MergeVisionPipeLineTableName )
 
        # if AprilTag:
         #    findAprilTag(frame, CameF)
