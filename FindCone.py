@@ -182,7 +182,6 @@ def findCones(cntsSorted, image, CameraFOV):
         else:
             finalTarget = [0,0,0]
 
-        cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), white, 5)
 
         return image, finalTarget[2]
 
