@@ -17,46 +17,11 @@ except ImportError:
 # frame is the original images, mask is a binary mask based on desired color
 # centerX is center x coordinate of image
 # MergeVisionPipeLineTableName is the Network Table destination for yaw and distance
-CameraTiltAngle = 30
-def compute_output_values(tvec, cameraTiltAngle):
-    '''Compute the necessary output distance and angles'''
 
-    # The tilt angle only affects the distance and angle1 calcs
-    # This is a major impact on calculations
-    tilt_angle = math.radians(cameraTiltAngle)
-
-    x = tvec[0][0]
-    z = math.sin(tilt_angle) * tvec[1][0] + math.cos(tilt_angle) * tvec[2][0]
-
-    # distance in the horizontal plane between camera and target
-    distance_cone = math.sqrt(x**2 + z**2)
-    
-    return distance_cone
-
-def findTvecRvec(image, H_FOCAL_LENGTH, V_FOCAL_LENGTH):
-    # Read Image
-    size = image.shape
- 
-    # Camera internals
- 
-    focal_length = size[1]
-    center = (size[1]/2, size[0]/2)
-    camera_matrix = np.array(
-                          [[H_FOCAL_LENGTH, 0, center[0]],
-                          [0, V_FOCAL_LENGTH, center[1]],
-                          [0, 0, 1]], dtype = "double"
-                          )
-
-    dist_coeffs = np.array([[0.16171335604097975, -0.9962921370737408, -4.145368586842373e-05, 
-                             0.0015152030328047668, 1.230483016701437]])
 
 
 # Finds the balls from the masked image and displays them on original stream + network tables
 def findCone(frame, MergeVisionPipeLineTableName, CameraFOV):
-    tvec  = findTvecRvec(frame, H_FOCAL_LENGTH,V_FOCAL_LENGTH)
-    distance_cone= compute_output_values(tvec, CameraTiltAngle)
-    cv2.putText(frame, "distance: " + str(distance_cone), (10, 350), cv2.FONT_HERSHEY_COMPLEX, .9, white)
-
     # Copies frame and stores it in image
     image = frame.copy()
     #Create a yellow mask

@@ -105,7 +105,7 @@ else:  # implies images are to be read
     # Outer Target Images
     #images, imagename = load_images_from_folder("./2023VisionSampleImages/RetroTape")
     #images, imagename = load_images_from_folder("/Users/johngray/FRC/Vision2023-Competition/2023VisionSampleImages/RetroTape")
-    images, imagename = load_images_from_folder("./2023VisionSampleImages/AprilTags")
+    images, imagename = load_images_from_folder("./2023VisionSampleImages/PlayingFieldObjects")
     #images, imagename = load_images_from_folder("./HubImgSketchup")
     print(imagename)
 
