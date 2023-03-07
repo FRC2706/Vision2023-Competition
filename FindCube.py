@@ -31,12 +31,31 @@ def findCube(frame, MergeVisionPipeLineTableName,CameraFOV):
         contours, _ = cv2.findContours(MaskPurple, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
 
     
-    Yaw = 0
+    Yaw = 10000
     # Processes the contours, takes in (contours, output_image, (centerOfImage)
     if len(contours) != 0:
         image,Yaw = findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName)
     # Shows the contours overlayed on the original video
+
+    #cv2.imshow("colourRange", image)
+    #cv2.setMouseCallback("colourRange", colourRange, image)
+    screenHeight, screenWidth, _ = image.shape
+    # Gets center of width
+    centerX = (screenWidth / 2) - .5
+    cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), white, 5)
+
     return image, Yaw
+
+def colourRange (event, x, y, flags, params):
+    if event != cv2.EVENT_LBUTTONDOWN:
+        return
+    hsv = cv2.cvtColor(params, cv2.COLOR_BGR2HSV)
+    hValue = hsv[y,x,0]
+    sValue = hsv[y,x,1]
+    vValue = hsv[y,x,2]
+
+    print(str(hValue)+","+str(sValue)+","+str(vValue))
+    return
 
 def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
     screenHeight, screenWidth, channels = image.shape
@@ -58,17 +77,17 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
         ##print("Area of bounding rec: " + str(boundingRectArea))
         # Calculate Contour area
         cntArea = cv2.contourArea(cnt)
-        print("Area of contour: " + str(cntArea))
+        #print("Area of contour: " + str(cntArea))
         #calculate area of a cone standing up at that size
         expectedArea = (w*h/1.5)
-        print("expected area: " + str(expectedArea))
+        #print("expected area: " + str(expectedArea))
 
         #percentage of contour in bounding rect
         boundingRectContArea = float(cntArea/boundingRectArea)
         #print("Percentage contour area in bounding rect: " + str(boundingRectContArea))
         #percentage of contour in area of a cone standing up at that size
         expectedAreaContArea = float(cntArea/expectedArea)
-        print("percentage of contour in area of a Cube at that size: " + str(expectedAreaContArea))
+        #print("percentage of contour in area of a Cube at that size: " + str(expectedAreaContArea))
 
         #find the height of the bottom (y position of contour)
         # which is just the y value plus the height
@@ -96,13 +115,13 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
                 #box = np.int0(box)
                    
                 # Draws a vertical white line passing through center of contour
-                cv2.line(image, (cx, screenHeight), (cx, 0), white)
+                cv2.line(image, (cx, screenHeight), (cx, 0), purple, 5)
 
                 # Draws the contours
                 #cv2.drawContours(image, [cnt], 0, green, 2)
 
                 # Draws contour of bounding rectangle in red
-                cv2.rectangle(image, (x, y), (x + w, y + h), red, 1)
+                #cv2.rectangle(image, (x, y), (x + w, y + h), red, 1)
                    
                 # Appends important info to array
                 if [cx, cy, cnt, bottomHeight] not in BiggestCube:
@@ -132,7 +151,7 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
             # draw extreme points
             # from https://www.pyimagesearch.com/2016/04/11/finding-extreme-points-in-contours-with-opencv/
             #cv2.circle(image, topmost, 6, white, -1)
-            cv2.circle(image, bottommost, 6, blue, -1)
+            #cv2.circle(image, bottommost, 6, blue, -1)
             ##print('extreme points', leftmost,rightmost,topmost,bottommost)
 
             #print("topmost: " + str(topmost[0]))
@@ -163,12 +182,10 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
             # Puts the yaw on screen
             # Draws yaw of target + line where center of target is
             #finalYaw = round(finalTarget[1]*1000)/1000
-            cv2.putText(image, "Yaw: " + str(finalTarget[0]), (40, 150), cv2.FONT_HERSHEY_COMPLEX, .6,
-                        white)
-            cv2.line(image, (xCoord, screenHeight), (xCoord, 0), blue, 2)
+            #cv2.putText(image, "Yaw: " + str(finalTarget[0]), (40, 150), cv2.FONT_HERSHEY_COMPLEX, .6,white)
+            #cv2.line(image, (xCoord, screenHeight), (xCoord, 0), blue, 2)
 
-            cv2.putText(image, "cxYaw (Used): " + str(finalTarget[2]), (40, 175), cv2.FONT_HERSHEY_COMPLEX, .6,
-                        white)
+            cv2.putText(image, "Yaw_cube: " + str(finalTarget[2]), (40, 175), cv2.FONT_HERSHEY_COMPLEX, .6, white)
 
             # pushes Cone angle to network tables
             #publishNumber(MergeVisionPipeLineTableName, "YawToCone", finalTarget[0])
@@ -177,13 +194,15 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
         else:
             finalTarget = [0,0,0]
 
-        cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), white, 2)
+        #cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), white, 2)
+
 
         return image, finalTarget[2]
 
+
 # Checks if cone contours are worthy based off of contour area and (not currently) hull area
 def checkCube(cntArea, image_width,boundingRectContArea):
-    goodCone = (boundingRectContArea < 0.7) and (boundingRectContArea > 0.35)
+    goodCone = (boundingRectContArea > 0.5)
     if goodCone:
         print("cntArea " + str(cntArea) + " IMGWIDTH " + str(image_width) + " BOUNDING rect cont area " + str(boundingRectContArea) + str(goodCone))
     return goodCone

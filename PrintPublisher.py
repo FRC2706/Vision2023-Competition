@@ -5,3 +5,6 @@ def publishNumber(MergeVisionPipeLineTableName, name, value):
 
 def publishString(TableName, name, value):
    print(TableName + ": " + name + " : " + str(value))
+
+def publishBoolean(TableName, name, value):
+   print(TableName + ": " + name + " : " + str(value))
