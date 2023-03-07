@@ -188,7 +188,7 @@ while stayInLoop or cap.isOpened():
         processed, yaw = findCube(frame, MergeVisionPipeLineTableName,CameraFOV)
 
     if AprilTag:
-        processed = findAprilTagRobotpy(frame, MergeVisionPipeLineTableName )
+        processed = findAprilTag(frame, MergeVisionPipeLineTableName )
 
        # if AprilTag:
         #    findAprilTag(frame, CameF)
