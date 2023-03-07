@@ -105,7 +105,7 @@ else:  # implies images are to be read
     # Outer Target Images
     #images, imagename = load_images_from_folder("./2023VisionSampleImages/RetroTape")
     #images, imagename = load_images_from_folder("/Users/johngray/FRC/Vision2023-Competition/2023VisionSampleImages/RetroTape")
-    images, imagename = load_images_from_folder("./2023VisionSampleImages/AprilTags")
+    images, imagename = load_images_from_folder("./2023VisionSampleImages/RealCameraImages")
     #images, imagename = load_images_from_folder("./HubImgSketchup")
     print(imagename)
 
@@ -179,6 +179,7 @@ while stayInLoop or cap.isOpened():
         processed = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
         processed, Yaw = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
         processed, yaw = findCube(processed, MergeVisionPipeLineTableName,CameraFOV)
+        
 
     if Cone:
         processed = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
