@@ -28,14 +28,8 @@ from imutils.video import WebcamVideoStream
 from threading import Thread
 
 # Imports EVERYTHING from these files
-<<<<<<< HEAD
 
 
-=======
-from FindBall import *
-from FindTape import *
-from FindAprilTag import *
->>>>>>> pat
 from VisionConstants import *
 from VisionUtilities import *
 from VisionMasking import *
@@ -66,12 +60,9 @@ webCamNumber = 1
 
 # ADJUST DESIRED TARGET BASED ON VIDEO OR FILES ABOVE !!!
 Tape = False
-<<<<<<< HEAD
 Cone = False
 Cube = False
 Intake = False
-=======
->>>>>>> pat
 AprilTag = True
 CameraFOV = 68.5
 CameraTiltAngle = 30
@@ -112,14 +103,9 @@ elif useWebCam: #test against live camera
 else:  # implies images are to be read
 
     # Outer Target Images
-<<<<<<< HEAD
     #images, imagename = load_images_from_folder("./2023VisionSampleImages/RetroTape")
     #images, imagename = load_images_from_folder("/Users/johngray/FRC/Vision2023-Competition/2023VisionSampleImages/RetroTape")
     images, imagename = load_images_from_folder("./2023VisionSampleImages/AprilTags")
-=======
-    # 2023VisionSampleImages/RetroTape\.
-    images, imagename = load_images_from_folder("VisionImages./")
->>>>>>> pat
     #images, imagename = load_images_from_folder("./HubImgSketchup")
     print(imagename)
 
@@ -189,7 +175,6 @@ while stayInLoop or cap.isOpened():
         threshold = threshold_video(lower_green, upper_green, frame)
         processed, TargetPixelFromCenter, YawToTarget, distance = findTape(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
     
-<<<<<<< HEAD
     if Intake:
         processed = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
         #processed = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
@@ -206,10 +191,6 @@ while stayInLoop or cap.isOpened():
 
        # if AprilTag:
         #    findAprilTag(frame, CameF)
-=======
-        if AprilTag:
-            processed = findAprilTagCorner(frame, CameraFOV, threshold, MergeVisionPipeLineTableName)
->>>>>>> pat
 
            
 

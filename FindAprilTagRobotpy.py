@@ -29,9 +29,9 @@ object_points = np.array(object_points)
 def findAprilTag(frame, MergeVisionPipeLineTableName):
      #screenHeight, screenWidth, _ = frame.shape
      detector, estimator = get_apriltag_detector_and_estimator(frame.shape)
-     frame, tag_id, tvec, center = detect_and_process_apriltag(frame, detector, estimator, MergeVisionPipeLineTableName)
+     frame = detect_and_process_apriltag(frame, detector, estimator, MergeVisionPipeLineTableName)
 
-     return frame, tag_id, tvec, center
+     return frame
 
 # This function is called once to initialize the apriltag detector and the pose estimator
 def get_apriltag_detector_and_estimator(frame_size):
@@ -128,13 +128,19 @@ def detect_and_process_apriltag(frame, detector, estimator, MergeVisionPipeLineT
         tag_id, tvec, center = closest_tag
 
         publishNumber(MergeVisionPipeLineTableName, "TagId", tag_id)
-        publishNumber(MergeVisionPipeLineTableName, "PoseX", round(tvec[0],2))
-        publishNumber(MergeVisionPipeLineTableName, "PoseY", round(tvec[1],2))
-        publishNumber(MergeVisionPipeLineTableName, "PoseZ", round(tvec[2],2))
-
-        return frame, tag_id, tvec, center
+        publishNumber(MergeVisionPipeLineTableName, "PoseX", round(tvec[0], 4))
+        publishNumber(MergeVisionPipeLineTableName, "PoseY", round(tvec[1], 4))
+        publishNumber(MergeVisionPipeLineTableName, "PoseZ", round(tvec[2], 4))
     
+    else:
+        publishNumber(MergeVisionPipeLineTableName, "TagId", -1)
+        publishNumber(MergeVisionPipeLineTableName, "PoseX", -99)
+        publishNumber(MergeVisionPipeLineTableName, "PoseY", -99)
+        publishNumber(MergeVisionPipeLineTableName, "PoseZ", -99)
 
+    
+    return frame
+    
     # publish values to network table
     """
     publishNumber(MergeVisionPipeLineTableName, "DistanceToAprilTag", distance)
