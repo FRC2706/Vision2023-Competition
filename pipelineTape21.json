@@ -1,18 +1,17 @@
 {
-    "networkTableName": "MergeVisionPipelineTape21",
-    "networkTableReadName": "MergeVisionPipelineTape21",
+    "networkTableName": "MergeVisionPipelineAprilTags21",
+    "networkTableReadName": "MergeVisionPipelinePi21",
     "Driver": false,
     "Tape": true,
     "AprilTag": false,
     "Intake": false,
-    "OutputStream": "2706Tape",
+    "OutputStream": "2706_out_target",
     "ExposureTape": 40,
-    "ExposureIntake": 100,
     "ExposureAprilTag": 100,
     "CameraFOV": 68.5,
     "CameraTiltAngle": 35,
     "OverlayScaleFactor": 0.2,
     "OutputStreamWidth": 320,
-    "OutputStreamHeight": 180,
+    "OutputStreamHeight": 160,
     "CameraRotation": true
 }

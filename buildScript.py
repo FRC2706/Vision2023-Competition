@@ -58,4 +58,4 @@ zipObj3.write('DriverOverlay.py')
 zipObj3.write('MergeFRCPipeline.py','uploaded.py')
 zipObj3.write('pipelineAprilTag23.json', 'pipelineConfig.json')
 
-print("I have wrote the file: " + FILENAME + ", " + FILENAME2 + ", " + FILENAME3)
+print("I have written the file: " + FILENAME + ", " + FILENAME2 + ", " + FILENAME3)
