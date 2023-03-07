@@ -67,7 +67,7 @@ def DetectIntakeItem(frame, MergeVisionPipeLineTableName):
         publishBoolean(MergeVisionPipeLineTableName, "DetectCone", True)
     elif FoundPurple:
         publishBoolean(MergeVisionPipeLineTableName, "DetectCube", True)
-    elif FoundPurple & FoundYellow:
+    elif FoundPurple and FoundYellow:
         publishBoolean(MergeVisionPipeLineTableName, "DetectCone", True)
         publishBoolean(MergeVisionPipeLineTableName, "DetectCube", True)
     else:
