@@ -232,14 +232,14 @@ CameraRotation = data["CameraRotation"]
 
 
 if Intake:
-    switch = 1
+    switch = 3
 
 elif TapeEnabled:
     switch = 2
 
 elif AprilTagsEnabled:
-    switch = 3
-
+    switch = 1
+    
 class CameraConfig: pass
 
 team = 2706
@@ -522,8 +522,13 @@ if __name__ == "__main__":
 
         if (networkTableVisionPipeline.getBoolean("Intake", True)):
             processed = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
-            processed = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
-            processed, yaw = findCube(frame, MergeVisionPipeLineTableName,CameraFOV)
+            processed, yaw_cone = findCone(processed, MergeVisionPipeLineTableName,CameraFOV)
+            processed, yaw_cube = findCube(processed, MergeVisionPipeLineTableName,CameraFOV)
+            if yaw_cone < yaw_cube:
+                publishNumber (MergeVisionPipeLineTableName, "Yaw", yaw_cone)
+            else:
+                publishNumber (MergeVisionPipeLineTableName, "Yaw", yaw_cube)
+
                               
 
         # Puts timestamp of camera on network tables

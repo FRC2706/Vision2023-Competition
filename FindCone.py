@@ -18,8 +18,10 @@ except ImportError:
 # centerX is center x coordinate of image
 # MergeVisionPipeLineTableName is the Network Table destination for yaw and distance
 
+
+
 # Finds the balls from the masked image and displays them on original stream + network tables
-def findCone(frame, MergeVisionPipeLineTableName,CameraFOV):
+def findCone(frame, MergeVisionPipeLineTableName, CameraFOV):
     # Copies frame and stores it in image
     image = frame.copy()
     #Create a yellow mask
@@ -43,17 +45,17 @@ def findCone(frame, MergeVisionPipeLineTableName,CameraFOV):
     else:
         contours, _ = cv2.findContours(MaskYellow, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
     
-    Yaw = 0
+    Yaw = 10000
     # Processes the contours, takes in (contours, output_image, (centerOfImage)
     if len(contours) != 0:    
         # Sort contours by area size (biggest to smallest)
         cntsSorted = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)[:5]#what is this 5?
-        image,Yaw = findCones(cntsSorted, image,CameraFOV,)
-    # Shows the contours overlayed on the original video
-        publishNumber(MergeVisionPipeLineTableName, "YawToCone", Yaw)
+        image,Yaw = findCones(cntsSorted, image, CameraFOV)
+        # Shows the contours overlayed on the original video
+        
     return image, Yaw
 
-def findCones(cntsSorted, image,CameraFOV,):
+def findCones(cntsSorted, image, CameraFOV):
     screenHeight, screenWidth, _ = image.shape
     # Gets center of width
     centerX = (screenWidth / 2) - .5
@@ -70,13 +72,13 @@ def findCones(cntsSorted, image,CameraFOV,):
         ##print("Area of bounding rec: " + str(boundingRectArea))
         # Calculate Contour area
         cntArea = cv2.contourArea(cnt)
-        print("Area of contour: " + str(cntArea))
+        #print("Area of contour: " + str(cntArea))
         #calculate area of a cone standing up at that size
         expectedArea = (w*h/2)
-        print("expected area: " + str(expectedArea))
+        #print("expected area: " + str(expectedArea))
         #percentage of contour in area of a cone standing up at that size
         expectedAreaContArea = float(cntArea/expectedArea)
-        print("percentage of contour in area of a cone standing up at that size: " + str(expectedAreaContArea))
+        #print("percentage of contour in area of a cone standing up at that size: " + str(expectedAreaContArea))
 
         #find the height of the bottom (y position of contour)
         # which is just the y value plus the height
@@ -104,13 +106,13 @@ def findCones(cntsSorted, image,CameraFOV,):
                 #box = np.int0(box)
                    
                 # Draws a vertical white line passing through center of contour
-                cv2.line(image, (cx, screenHeight), (cx, 0), white)
+                cv2.line(image, (cx, screenHeight), (cx, 0), yellow,5)
 
                 # Draws the contours
                 #cv2.drawContours(image, [cnt], 0, green, 2)
 
                 # Draws contour of bounding rectangle in red
-                cv2.rectangle(image, (x, y), (x + w, y + h), red, 1)
+                #cv2.rectangle(image, (x, y), (x + w, y + h), red, 1)
                    
                 # Appends important info to array
                 if [cx, cy, cnt, bottomHeight] not in biggestCone:
@@ -140,7 +142,7 @@ def findCones(cntsSorted, image,CameraFOV,):
             # draw extreme points
             # from https://www.pyimagesearch.com/2016/04/11/finding-extreme-points-in-contours-with-opencv/
             #cv2.circle(image, topmost, 6, white, -1)
-            cv2.circle(image, bottommost, 6, blue, -1)
+            #cv2.circle(image, bottommost, 6, blue, -1)
             ##print('extreme points', leftmost,rightmost,topmost,bottommost)
 
             #print("topmost: " + str(topmost[0]))
@@ -171,23 +173,21 @@ def findCones(cntsSorted, image,CameraFOV,):
             # Puts the yaw on screen
             # Draws yaw of target + line where center of target is
             #finalYaw = round(finalTarget[1]*1000)/1000
-            cv2.putText(image, "Yaw: " + str(finalTarget[0]), (40, 200), cv2.FONT_HERSHEY_COMPLEX, .6,
-                        white)
-            cv2.line(image, (xCoord, screenHeight), (xCoord, 0), blue, 2)
+            #cv2.putText(image, "Yaw: " + str(finalTarget[0]), (40, 200), cv2.FONT_HERSHEY_COMPLEX, .6, white)
+            #cv2.line(image, (xCoord, screenHeight), (xCoord, 0), blue, 2)
 
-            cv2.putText(image, "cxYaw (Used): " + str(finalTarget[2]), (40, 225), cv2.FONT_HERSHEY_COMPLEX, .6,
-                        white)
+            cv2.putText(image, "Yaw_cone: " + str(finalTarget[2]), (40, 225), cv2.FONT_HERSHEY_COMPLEX, .6, white)
 
 
         else:
             finalTarget = [0,0,0]
 
-        cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), white, 2)
 
         return image, finalTarget[2]
+
 
 # Checks if cone contours are worthy based off of contour area and (not currently) hull area
 def checkCone(cntArea, expectedAreaContArea):
     goodCone = (expectedAreaContArea > 0.8)
-    print(str(goodCone))
+    #print(str(goodCone))
     return goodCone

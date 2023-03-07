@@ -39,7 +39,7 @@ from DetectIntakeItem import *
 from FindCube import *
 from FindCone import *
 from FindTape import *
-from FindAprilTagRobotpy import *
+#from FindAprilTagRobotpy import *
 
 print()
 print("--- Merge Viewer Starting ---")
@@ -62,8 +62,8 @@ webCamNumber = 1
 Tape = False
 Cone = False
 Cube = False
-Intake = False
-AprilTag = True
+Intake = True
+AprilTag = False
 CameraFOV = 68.5
 CameraTiltAngle = 30
 OverlayScaleFactor = 1
@@ -105,7 +105,7 @@ else:  # implies images are to be read
     # Outer Target Images
     #images, imagename = load_images_from_folder("./2023VisionSampleImages/RetroTape")
     #images, imagename = load_images_from_folder("/Users/johngray/FRC/Vision2023-Competition/2023VisionSampleImages/RetroTape")
-    images, imagename = load_images_from_folder("./2023VisionSampleImages/AprilTags")
+    images, imagename = load_images_from_folder("./2023VisionSampleImages/RealCameraImages")
     #images, imagename = load_images_from_folder("./HubImgSketchup")
     print(imagename)
 
@@ -177,8 +177,9 @@ while stayInLoop or cap.isOpened():
     
     if Intake:
         processed = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
-        #processed = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
-        #processed, yaw = findCube(frame, MergeVisionPipeLineTableName,CameraFOV)
+        processed, Yaw = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
+        processed, yaw = findCube(processed, MergeVisionPipeLineTableName,CameraFOV)
+        
 
     if Cone:
         processed = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
@@ -224,8 +225,8 @@ while stayInLoop or cap.isOpened():
     if (showAverageFPS): 
         cv2.putText(processed, 'Grouped FPS: {:.2f}'.format(1000/(displayFPS)), (20, 20), cv2.FONT_HERSHEY_COMPLEX, 0.6 ,white)
         cv2.putText(processed, 'Average FPS: {:.2f}'.format(averageFPS), (20, 50), cv2.FONT_HERSHEY_COMPLEX, 0.6 ,white)
-    else:
-        cv2.putText(processed, 'Grouped FPS: {:.2f}'.format(1000/(displayFPS)), (20, 20), cv2.FONT_HERSHEY_COMPLEX, 0.6 ,white)
+    #else:
+        #cv2.putText(processed, 'Grouped FPS: {:.2f}'.format(1000/(displayFPS)), (20, 20), cv2.FONT_HERSHEY_COMPLEX, 0.6 ,white)
 
     cv2.imshow("raw", frame)
     cv2.setMouseCallback('raw', draw_circle)
