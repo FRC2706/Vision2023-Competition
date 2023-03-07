@@ -509,7 +509,7 @@ if __name__ == "__main__":
            # yaw = networkTableVisionReadPipeline.getNumber("YawToTarget", -99)
            # distance = networkTableVisionReadPipeline.getNumber("DistanceToTarget", -1)
            # NTOverlayScaleFactor = networkTableVisionReadPipeline.getValue("OverlayScaleFactor",OverlayScaleFactor)
-            processed = findAprilTagRobotpy(frame, MergeVisionPipeLineTableName)
+            processed, _, _, _ = findAprilTag(frame, MergeVisionPipeLineTableName)
 
 
         if (networkTableVisionPipeline.getBoolean("Intake", True)):
