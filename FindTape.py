@@ -16,7 +16,7 @@ except ImportError:
 
 # real world dimensions of the goal target
 # These are the full dimensions around both strips
-TARGET_STRIP_LENGTH = 2.0    # inches
+TARGET_STRIP_LENGTH = 1.65    # inches
 TARGET_STRIP_WIDTH = 4.0        # inches
 
 
