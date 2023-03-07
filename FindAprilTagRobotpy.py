@@ -132,7 +132,14 @@ def detect_and_process_apriltag(frame, detector, estimator, MergeVisionPipeLineT
         publishNumber(MergeVisionPipeLineTableName, "PoseY", round(tvec[1],2))
         publishNumber(MergeVisionPipeLineTableName, "PoseZ", round(tvec[2],2))
 
-        return frame, tag_id, tvec, center
+    
+    else:
+        publishNumber(MergeVisionPipeLineTableName, "TagId", -1)
+        publishNumber(MergeVisionPipeLineTableName, "PoseX", -99)
+        publishNumber(MergeVisionPipeLineTableName, "PoseY", -99)
+        publishNumber(MergeVisionPipeLineTableName, "PoseZ", -99)
+
+    return frame, tag_id, tvec, center
     
 
     # publish values to network table
