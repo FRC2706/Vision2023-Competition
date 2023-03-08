@@ -32,8 +32,6 @@ def findCone(frame, MergeVisionPipeLineTableName, CameraFOV):
     kernel = np.ones((10,3), np.uint8)
     # Using cv2.erode() method 
     MaskYellow = cv2.erode(MaskYellow, kernel)
-    MaskYellow = cv2.erode(MaskYellow, kernel)
-    MaskYellow = cv2.erode(MaskYellow, kernel)
     
     #Cannot show image on raspberry Pi, you can draw on the frame
     #cv2.imshow("Eroded", MaskYellow)
@@ -45,15 +43,14 @@ def findCone(frame, MergeVisionPipeLineTableName, CameraFOV):
     else:
         contours, _ = cv2.findContours(MaskYellow, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
     
-    Yaw = 10000
     # Processes the contours, takes in (contours, output_image, (centerOfImage)
     if len(contours) != 0:    
         # Sort contours by area size (biggest to smallest)
         cntsSorted = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)[:5]#what is this 5?
-        image,Yaw = findCones(cntsSorted, image, CameraFOV)
+        image,Yaw,area = findCones(cntsSorted, image, CameraFOV)
         # Shows the contours overlayed on the original video
         
-    return image, Yaw
+    return image, Yaw, area
 
 def findCones(cntsSorted, image, CameraFOV):
     screenHeight, screenWidth, _ = image.shape
@@ -87,7 +84,7 @@ def findCones(cntsSorted, image, CameraFOV):
         M = cv2.moments(cnt)
 
         # Filters contours based off of size
-        if (checkCone(cntArea, expectedAreaContArea)):
+        if (checkCone(expectedAreaContArea)):
             ### MOSTLY DRAWING CODE, BUT CALCULATES IMPORTANT INFO ###
             # Gets the centeroids of contour
             if M["m00"] != 0:
@@ -180,14 +177,17 @@ def findCones(cntsSorted, image, CameraFOV):
 
 
         else:
-            finalTarget = [0,0,0]
+            finalTarget = [0,0,-99]
 
-
-        return image, finalTarget[2]
+        if finalTarget[2]==0:
+            area = 0
+        else:
+            area = cv2.contourArea(closestCone[2])
+        return image, finalTarget[2], area
 
 
 # Checks if cone contours are worthy based off of contour area and (not currently) hull area
-def checkCone(cntArea, expectedAreaContArea):
+def checkCone(expectedAreaContArea):
     goodCone = (expectedAreaContArea > 0.8)
     #print(str(goodCone))
     return goodCone

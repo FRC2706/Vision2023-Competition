@@ -31,10 +31,9 @@ def findCube(frame, MergeVisionPipeLineTableName,CameraFOV):
         contours, _ = cv2.findContours(MaskPurple, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
 
     
-    Yaw = 10000
     # Processes the contours, takes in (contours, output_image, (centerOfImage)
     if len(contours) != 0:
-        image,Yaw = findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName)
+        image,Yaw, area = findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName)
     # Shows the contours overlayed on the original video
 
     #cv2.imshow("colourRange", image)
@@ -44,7 +43,7 @@ def findCube(frame, MergeVisionPipeLineTableName,CameraFOV):
     centerX = (screenWidth / 2) - .5
     cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), white, 5)
 
-    return image, Yaw
+    return image, Yaw, area
 
 def colourRange (event, x, y, flags, params):
     if event != cv2.EVENT_LBUTTONDOWN:
@@ -192,12 +191,15 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
             #publishNumber(MergeVisionPipeLineTableName, "DistanceToCone", finalTarget[1])
             #publishNumber(MergeVisionPipeLineTableName, "ConeCentroid1Yaw", finalTarget[2])
         else:
-            finalTarget = [0,0,0]
+            finalTarget = [0,0,-99]
 
         #cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), white, 2)
 
-
-        return image, finalTarget[2]
+        if finalTarget[2]==0:
+            area = 0
+        else:
+            area = cv2.contourArea(closestCone[2])
+        return image, finalTarget[2], area
 
 
 # Checks if cone contours are worthy based off of contour area and (not currently) hull area

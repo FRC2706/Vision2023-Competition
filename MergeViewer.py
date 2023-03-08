@@ -39,7 +39,7 @@ from DetectIntakeItem import *
 from FindCube import *
 from FindCone import *
 from FindTape import *
-from FindAprilTagRobotpy import *
+from FindAprilTag import *
 
 print()
 print("--- Merge Viewer Starting ---")
@@ -62,8 +62,8 @@ webCamNumber = 1
 Tape = False
 Cone = False
 Cube = False
-Intake = False
-AprilTag = True
+Intake = True
+AprilTag = False
 CameraFOV = 68.5
 CameraTiltAngle = 30
 OverlayScaleFactor = 1
@@ -176,9 +176,10 @@ while stayInLoop or cap.isOpened():
         processed, TargetPixelFromCenter, YawToTarget, distance = findTape(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
     
     if Intake:
-        processed = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
-        #processed = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
-        #processed, yaw = findCube(frame, MergeVisionPipeLineTableName,CameraFOV)
+        processed = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+        processed = DetectIntakeItem(processed, MergeVisionPipeLineTableName)
+        processed, yaw, area = findCone(processed, MergeVisionPipeLineTableName,CameraFOV)
+        processed, yaw, area = findCube(processed, MergeVisionPipeLineTableName,CameraFOV)
 
     if Cone:
         processed = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
