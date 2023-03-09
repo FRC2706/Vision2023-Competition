@@ -173,7 +173,7 @@ def findCones(cntsSorted, image, CameraFOV):
             #cv2.putText(image, "Yaw: " + str(finalTarget[0]), (40, 200), cv2.FONT_HERSHEY_COMPLEX, .6, white)
             #cv2.line(image, (xCoord, screenHeight), (xCoord, 0), blue, 2)
 
-            cv2.putText(image, "Yaw_cone: " + str(finalTarget[2]), (40, 225), cv2.FONT_HERSHEY_COMPLEX, .6, white)
+            #cv2.putText(image, "Yaw_cone: " + str(finalTarget[2]), (40, 225), cv2.FONT_HERSHEY_COMPLEX, .6, white)
 
 
         else:

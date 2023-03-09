@@ -184,7 +184,7 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
             #cv2.putText(image, "Yaw: " + str(finalTarget[0]), (40, 150), cv2.FONT_HERSHEY_COMPLEX, .6,white)
             #cv2.line(image, (xCoord, screenHeight), (xCoord, 0), blue, 2)
 
-            cv2.putText(image, "Yaw_cube: " + str(finalTarget[2]), (40, 175), cv2.FONT_HERSHEY_COMPLEX, .6, white)
+            #cv2.putText(image, "Yaw_cube: " + str(finalTarget[2]), (40, 175), cv2.FONT_HERSHEY_COMPLEX, .6, white)
 
             # pushes Cone angle to network tables
             #publishNumber(MergeVisionPipeLineTableName, "YawToCone", finalTarget[0])
