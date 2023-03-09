@@ -32,8 +32,6 @@ def findCone(frame, MergeVisionPipeLineTableName, CameraFOV):
     kernel = np.ones((10,3), np.uint8)
     # Using cv2.erode() method 
     MaskYellow = cv2.erode(MaskYellow, kernel)
-    MaskYellow = cv2.erode(MaskYellow, kernel)
-    MaskYellow = cv2.erode(MaskYellow, kernel)
     
     #Cannot show image on raspberry Pi, you can draw on the frame
     #cv2.imshow("Eroded", MaskYellow)
@@ -45,7 +43,7 @@ def findCone(frame, MergeVisionPipeLineTableName, CameraFOV):
     else:
         contours, _ = cv2.findContours(MaskYellow, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
     
-    Yaw = 10000
+    Yaw = -99
     # Processes the contours, takes in (contours, output_image, (centerOfImage)
     if len(contours) != 0:    
         # Sort contours by area size (biggest to smallest)
@@ -180,7 +178,7 @@ def findCones(cntsSorted, image, CameraFOV):
 
 
         else:
-            finalTarget = [0,0,0]
+            finalTarget = [0,0,-99]
 
 
         return image, finalTarget[2]
