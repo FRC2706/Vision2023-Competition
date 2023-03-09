@@ -28,7 +28,7 @@ def findCone(frame, MergeVisionPipeLineTableName, CameraFOV):
     MaskYellow = threshold_video(lower_yellow, upper_yellow, image)
 
     #Cannot show image on raspberry Pi, you can draw on the frame
-    #cv2.imshow("Mask", MaskYellow)
+    cv2.imshow("Mask", MaskYellow)
     kernel = np.ones((10,3), np.uint8)
     # Using cv2.erode() method 
     MaskYellow = cv2.erode(MaskYellow, kernel)
@@ -179,7 +179,7 @@ def findCones(cntsSorted, image, CameraFOV):
         else:
             finalTarget = [0,0,-99]
 
-        if finalTarget[2]==0:
+        if finalTarget[2] == -99:
             area = 0
         else:
             area = cv2.contourArea(closestCone[2])

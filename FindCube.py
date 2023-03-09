@@ -195,7 +195,7 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
 
         #cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), white, 2)
 
-        if finalTarget[2]==0:
+        if finalTarget[2] == -99:
             area = 0
         else:
             area = cv2.contourArea(closestCone[2])

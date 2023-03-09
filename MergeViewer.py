@@ -39,7 +39,6 @@ from DetectIntakeItem import *
 from FindCube import *
 from FindCone import *
 from FindTape import *
-from FindAprilTag import *
 
 print()
 print("--- Merge Viewer Starting ---")
