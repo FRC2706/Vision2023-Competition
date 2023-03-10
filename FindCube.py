@@ -30,7 +30,7 @@ def findCube(frame, MergeVisionPipeLineTableName,CameraFOV):
     else:
         contours, _ = cv2.findContours(MaskPurple, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
 
-    
+    Yaw=-99
     # Processes the contours, takes in (contours, output_image, (centerOfImage)
     if len(contours) != 0:
         image,Yaw, area = findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName)
