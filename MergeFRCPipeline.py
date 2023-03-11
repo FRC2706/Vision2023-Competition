@@ -505,7 +505,7 @@ if __name__ == "__main__":
             if (networkTableVisionPipeline.getBoolean("SendMask", False)):
                 processed = threshold
             else:    
-                processed, final_center, YawToTarget, distance = findTape(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
+                processed, final_center, YawToTarget, distance = findTargets(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
 
                 #Read RPM From Network Table
                 rpm = networkTableVisionPipeline.getNumber("RPM", 0)
