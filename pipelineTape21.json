@@ -7,6 +7,7 @@
     "Intake": false,
     "OutputStream": "2706_out_target",
     "ExposureTape": 40,
+    "ExposureIntake": 100,
     "ExposureAprilTag": 100,
     "CameraFOV": 68.5,
     "CameraTiltAngle": 35,
