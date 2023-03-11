@@ -501,6 +501,7 @@ if __name__ == "__main__":
 
         #Check if Network Table value Tape is True
         if (networkTableVisionPipeline.getBoolean("Tape", True)): 
+            frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
             threshold = threshold_video(lower_green, upper_green, frame)
             if (networkTableVisionPipeline.getBoolean("SendMask", False)):
                 processed = threshold
@@ -511,6 +512,9 @@ if __name__ == "__main__":
                 rpm = networkTableVisionPipeline.getNumber("RPM", 0)
                 if rpm != 0:
                     cv2.putText(processed, "RPM: " + str(round(rpm,2)), (20, 340), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
+
+
+            
 
         if (networkTableVisionPipeline.getBoolean("AprilTag", True)):
            processed = findAprilTag(frame, MergeVisionPipeLineTableName)

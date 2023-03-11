@@ -50,8 +50,8 @@ def calculateFocalLengthsFromInput(cameraFOV, image_width, image_height):
 
     #To calculate the aspect ratio, first find the greatest common divisor between the
     #image height and image width of the camera
-    print(image_width)
-    print(image_height)
+    # print(image_width)
+    # print(image_height)
     resolution_gcd = math.gcd(image_width, image_height)
 
     #The horizontal aspect is simply the imagewidth divided by the gcd
