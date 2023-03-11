@@ -32,7 +32,7 @@ real_world_coordinates = np.array([
 MAXIMUM_TARGET_AREA = 4400
 
 # Finds the tape targets from the masked image and displays them on original stream + network tales
-def findTape(frame, cameraFOV, CameraTiltAngle, mask, MergeVisionPipeLineTableName, past_distances):
+def findTargets(frame, cameraFOV, CameraTiltAngle, mask, MergeVisionPipeLineTableName, past_distances):
 
     
     # Taking a matrix of size 5 as the kernel 
@@ -639,7 +639,7 @@ real_world_coordinates = np.array([
 MAXIMUM_TARGET_AREA = 4400
 
 # Finds the tape targets from the masked image and displays them on original stream + network tales
-def findTargets(frame, cameraFOV, CameraTiltAngle, mask, MergeVisionPipeLineTableName, past_distances):
+def findTape(frame, cameraFOV, CameraTiltAngle, mask, MergeVisionPipeLineTableName, past_distances):
 
     
     # Taking a matrix of size 5 as the kernel 
@@ -695,7 +695,7 @@ def findTargets(frame, cameraFOV, CameraTiltAngle, mask, MergeVisionPipeLineTabl
     YawToTarget = -99
     distance = -1
     if len(contours) != 0:
-        image, final_center, YawToTarget, distance = findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableName, past_distances, cameraFOV, CameraTiltAngle)
+        image, final_center, YawToTarget, distance = findTargets(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableName, past_distances, cameraFOV, CameraTiltAngle)
     else:
         past_distances.clear()
         YawToTarget = -99
