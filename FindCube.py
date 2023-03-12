@@ -37,8 +37,8 @@ def findCube(frame, MergeVisionPipeLineTableName,CameraFOV):
         image,Yaw, area = findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName)
     # Shows the contours overlayed on the original video
 
-    cv2.imshow("colourRange", image)
-    cv2.setMouseCallback("colourRange", colourRange, image)
+    #cv2.imshow("colourRange", image)
+    #cv2.setMouseCallback("colourRange", colourRange, image)
     screenHeight, screenWidth, _ = image.shape
     # Gets center of width
     centerX = (screenWidth / 2) - .5
