@@ -44,6 +44,7 @@ def findCone(frame, MergeVisionPipeLineTableName, CameraFOV):
         contours, _ = cv2.findContours(MaskYellow, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
     
     Yaw=-99
+    area = 0
     # Processes the contours, takes in (contours, output_image, (centerOfImage)
     if len(contours) != 0:    
         # Sort contours by area size (biggest to smallest)
