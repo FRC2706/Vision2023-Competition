@@ -363,7 +363,7 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                 contourCorners = []
 
                 
-                cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), white, 2)
+                #cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), white, 2)
 
                 #Found candidate contours
                 #now find the following:
@@ -439,6 +439,14 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                 #print("Average_AREA: ", average_area)
 
                 H_FOCAL_LENGTH, V_FOCAL_LENGTH = calculateFocalLengthsFromInput(cameraFOV, screenWidth, screenHeight)
+
+               # visionOffset = (11.5/(H_FOCAL_LENGTH/2))*(screenWidth/2)
+               
+                cameraOffset = getTargetCenterFromYaw(11.5, centerX, H_FOCAL_LENGTH)-(screenWidth/2)
+                #print("offset " , visionOffset)
+                #print("H FOV " , H_FOCAL_LENGTH)
+                #print("PixelPos " , getTargetCenterFromYaw(11.5, centerX, H_FOCAL_LENGTH))
+
 
                 YawToTarget = calculateYaw(final_center, centerX, H_FOCAL_LENGTH)
 
@@ -518,7 +526,7 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                 # color 0 is red
                 # color 1 is yellow
                 # color 2 is green
-                if (YawToTarget >= -2 and YawToTarget <= 2):
+                if (YawToTarget >= 10 and YawToTarget <= 13):
                     colour = green
                     #Use Bling
                     #Set Green colour
@@ -529,7 +537,7 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                    #     publishNumber("blingTable", "wait_ms",0)
                    #     publishString("blingTable","command","solid")
                    #     blingColour = 2
-                if ((YawToTarget >= -5 and YawToTarget < -2) or (YawToTarget > 2 and YawToTarget <= 5)):  
+                if ((YawToTarget >= 7 and YawToTarget < 10) or (YawToTarget > 13 and YawToTarget <= 16)):  
                     colour = yellow
                     
                    # if (blingColour != 1):
@@ -539,7 +547,7 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                    #     publishNumber("blingTable", "wait_ms",0)
                    #     publishString("blingTable","command","solid")
                    #     blingColour = 1
-                if ((YawToTarget < -5 or YawToTarget > 5)):  
+                if ((YawToTarget < 7 or YawToTarget > 16)):  
                     colour = red
                    # if (blingColour != 0):
                    #     publishNumber("blingTable", "red",255)
@@ -549,7 +557,8 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                    #     publishString("blingTable","command","solid")
                    #     blingColour = 0
 
-                cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), white, 2)
+                #print(visionOffset)
+                cv2.line(image, (round(centerX+cameraOffset), screenHeight), (round(centerX+cameraOffset), 0), white, 2)
                 cv2.line(image, (final_center, screenHeight), (final_center, 0), colour, 2)
                 #print("Final_Center:",final_center)
 

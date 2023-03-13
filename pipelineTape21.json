@@ -6,7 +6,7 @@
     "AprilTag": false,
     "Intake": false,
     "OutputStream": "2706Tape",
-    "ExposureTape": 40,
+    "ExposureTape": 17,
     "ExposureIntake": 100,
     "ExposureAprilTag": 100,
     "CameraFOV": 68.5,
