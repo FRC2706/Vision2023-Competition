@@ -124,8 +124,14 @@ class WebcamVideoStream:
                 self.autoExpose = True
                 
                 if self.switchAprilTag != True:
+                    self.webcam.setBrightness(50)
                     self.webcam.setExposureManual(60)
                     self.webcam.setExposureManual(ExposureAprilTag)
+                    self.webcam.setBrightness(51)
+                    time.sleep(0.5)
+                    self.webcam.setBrightness(52)
+
+                   # self.webcam.setContrast(90)
                     #self.webcam.setExposureAuto()
                     ##print("Driver mode")
                     self.switchTape = False
@@ -517,7 +523,7 @@ if __name__ == "__main__":
             
 
         if (networkTableVisionPipeline.getBoolean("AprilTag", True)):
-           processed = findAprilTag(frame, MergeVisionPipeLineTableName)
+           processed = findAprilTag(frame, MergeVisionPipeLineTableName, timestamp)
 
 
         if (networkTableVisionPipeline.getBoolean("Intake", True)):

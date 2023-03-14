@@ -25,11 +25,13 @@ object_points.append(  [float(marker_size / 2),float(-marker_size / 2), 0])
 object_points.append(  [float(-marker_size / 2),float(-marker_size / 2), 0])
 object_points = np.array(object_points)
 
+lastAprilTagTimestamp = 0
+
 # This is the main function initiated from MergeViewer and Merge2023Pipeline
-def findAprilTag(frame, MergeVisionPipeLineTableName):
+def findAprilTag(frame, MergeVisionPipeLineTableName, timestamp):
      #screenHeight, screenWidth, _ = frame.shape
      detector, estimator = get_apriltag_detector_and_estimator(frame.shape)
-     frame = detect_and_process_apriltag(frame, detector, estimator, MergeVisionPipeLineTableName)
+     frame = detect_and_process_apriltag(frame, detector, estimator, MergeVisionPipeLineTableName, timestamp)
 
      return frame
 
@@ -80,13 +82,15 @@ def draw_tag(frame, result):
 
 # This function is called once for every frame captured by the Webcam. For testing, it can simply
 # be passed a frame capture loaded from a file. (See commented-out alternative `if __name__ == main:` at bottom of file)
-def detect_and_process_apriltag(frame, detector, estimator, MergeVisionPipeLineTableName):
+def detect_and_process_apriltag(frame, detector, estimator, MergeVisionPipeLineTableName, timestamp):
+    global lastAprilTagTimestamp
+    
     assert frame is not None
     # Convert the frame to grayscale
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # Detect apriltag
     tag_info = detector.detect(gray)
-    DETECTION_MARGIN_THRESHOLD = 100
+    DETECTION_MARGIN_THRESHOLD = 70
     filter_tags = [tag for tag in tag_info if tag.getDecisionMargin() > DETECTION_MARGIN_THRESHOLD and tag.getHamming() == 0]
 
     if len(filter_tags) > 0:
@@ -131,14 +135,27 @@ def detect_and_process_apriltag(frame, detector, estimator, MergeVisionPipeLineT
         publishNumber(MergeVisionPipeLineTableName, "PoseX", round(tvec[0], 4))
         publishNumber(MergeVisionPipeLineTableName, "PoseY", round(tvec[1], 4))
         publishNumber(MergeVisionPipeLineTableName, "PoseZ", round(tvec[2], 4))
+        publishNumber(MergeVisionPipeLineTableName, "AprilTagVideoTimestamp", timestamp)
+        
+        #print(timestamp-lastAprilTagTimestamp)
+        if (lastAprilTagTimestamp == 0):
+            lastAprilTagTimestamp = timestamp
+        difference = timestamp-lastAprilTagTimestamp
+        publishNumber(MergeVisionPipeLineTableName, "TimeSincelastPublish", round((difference/1000),2))
+        lastAprilTagTimestamp = timestamp
     
     else:
-        publishNumber(MergeVisionPipeLineTableName, "TagId", -1)
-        publishNumber(MergeVisionPipeLineTableName, "PoseX", -99)
-        publishNumber(MergeVisionPipeLineTableName, "PoseY", -99)
-        publishNumber(MergeVisionPipeLineTableName, "PoseZ", -99)
+        if (lastAprilTagTimestamp == 0):
+            lastAprilTagTimestamp = timestamp
+        difference = timestamp-lastAprilTagTimestamp
+        publishNumber(MergeVisionPipeLineTableName, "TimeSincelastPublish", round((difference/1000),2))
+        #publishNumber(MergeVisionPipeLineTableName, "TagId", -1)
+        #publishNumber(MergeVisionPipeLineTableName, "PoseX", -99)
+        #publishNumber(MergeVisionPipeLineTableName, "PoseY", -99)
+        #publishNumber(MergeVisionPipeLineTableName, "PoseZ", -99)
 
     
+   #     return frame
     return frame
     
     # publish values to network table
