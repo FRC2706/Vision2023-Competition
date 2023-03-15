@@ -575,19 +575,19 @@ def findTape(contours, image, centerX, centerY, mask, MergeVisionPipeLineTableNa
                     publishNumber(MergeVisionPipeLineTableName, "PoseZ", round(poseZ,2))
 
 
-            else:
-                #If Nothing is found, publish -99 and -1 to Network table
-                publishNumber(MergeVisionPipeLineTableName, "YawToTarget", -99)
-                publishNumber(MergeVisionPipeLineTableName, "DistanceToTarget", -1)  
-                publishNumber(MergeVisionPipeLineTableName, "AverageDistance", -1)  
-                publishNumber(MergeVisionPipeLineTableName, "RobotYawToTarget", -99)
-                publishNumber(MergeVisionPipeLineTableName, "TargetPixelFromCenter", -99)
-                publishNumber(MergeVisionPipeLineTableName, "PoseX", -99)
-                publishNumber(MergeVisionPipeLineTableName, "PoseY", -99)
-                publishNumber(MergeVisionPipeLineTableName, "PoseZ", -99)
-                publishString("blingTable","command","clear")
-                past_distances.clear()
-                #print("past_distances are gone")
+                else:
+                    #If Nothing is found, publish -99 and -1 to Network table
+                    publishNumber(MergeVisionPipeLineTableName, "YawToTarget", -99)
+                    publishNumber(MergeVisionPipeLineTableName, "DistanceToTarget", -1)  
+                    publishNumber(MergeVisionPipeLineTableName, "AverageDistance", -1)  
+                    publishNumber(MergeVisionPipeLineTableName, "RobotYawToTarget", -99)
+                    publishNumber(MergeVisionPipeLineTableName, "TargetPixelFromCenter", -99)
+                    publishNumber(MergeVisionPipeLineTableName, "PoseX", -99)
+                    publishNumber(MergeVisionPipeLineTableName, "PoseY", -99)
+                    publishNumber(MergeVisionPipeLineTableName, "PoseZ", -99)
+                    publishString("blingTable","command","clear")
+                    past_distances.clear()
+                    #print("past_distances are gone")
 
     else:
         #If Nothing is found, publish -99 and -1 to Network table
