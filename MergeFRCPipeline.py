@@ -528,9 +528,9 @@ if __name__ == "__main__":
 
         if (networkTableVisionPipeline.getBoolean("Intake", True)):
             processed = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
-            processed, yaw_cone = findCone(processed, MergeVisionPipeLineTableName,CameraFOV)
-            processed, yaw_cube = findCube(processed, MergeVisionPipeLineTableName,CameraFOV)
-            if yaw_cone < yaw_cube:
+            processed, yaw_cone, area_cone = findCone(processed, MergeVisionPipeLineTableName,CameraFOV)
+            processed, yaw_cube, area_cube = findCube(processed, MergeVisionPipeLineTableName,CameraFOV)
+            if area_cone > area_cube:
                 publishNumber (MergeVisionPipeLineTableName, "Yaw", yaw_cone)
             else:
                 publishNumber (MergeVisionPipeLineTableName, "Yaw", yaw_cube)
