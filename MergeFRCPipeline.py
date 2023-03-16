@@ -517,7 +517,7 @@ if __name__ == "__main__":
 
 
         if (networkTableVisionPipeline.getBoolean("Intake", True)):
-            processed = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
+            processed = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
             processed = DetectIntakeItem(processed, MergeVisionPipeLineTableName)
             processed, yaw_cone, area_cone = findCone(processed, MergeVisionPipeLineTableName,CameraFOV)
             processed, yaw_cube, area_cube = findCube(processed, MergeVisionPipeLineTableName,CameraFOV)
