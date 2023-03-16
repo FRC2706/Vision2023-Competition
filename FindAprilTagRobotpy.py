@@ -14,6 +14,9 @@ try:
 except ImportError:
     from NetworkTablePublisher import *
 
+APRILTAG_SIZE = 0.151 # meters
+FOCAL_LENGTH_PIXELS = 333.82
+
 # Marker size and object
 marker_size = 5 + 15/16.0   # FRC targets might be a different size
 
@@ -42,7 +45,7 @@ def get_apriltag_detector_and_estimator(frame_size):
     assert detector.addFamily("tag16h5")
     estimator = robotpy_apriltag.AprilTagPoseEstimator(
     robotpy_apriltag.AprilTagPoseEstimator.Config(
-            0.2, 500, 500, frame_size[1] / 2.0, frame_size[0] / 2.0
+            APRILTAG_SIZE, FOCAL_LENGTH_PIXELS, FOCAL_LENGTH_PIXELS, frame_size[1] / 2.0, frame_size[0] / 2.0
         )
     )
     return detector, estimator
