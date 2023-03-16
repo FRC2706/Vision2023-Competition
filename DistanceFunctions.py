@@ -62,7 +62,7 @@ def calculateDistWPILib(cntHeight, targetHeight,knownObjectPixelHeight,knownObje
 # Link to further explanation: https://docs.google.com/presentation/d/1ediRsI-oR3-kwawFJZ34_ZTlQS2SDBLjZasjzZ-eXbQ/pub?start=false&loop=false&slide=id.g12c083cffa_0_298
 def calculateYaw(pixelX, centerX, hFocalLength):
     yaw = math.degrees(math.atan((pixelX - centerX) / hFocalLength))
-    return round(yaw,6)
+    return round(yaw,2)
 
 # tanx = (pixelx - centerx)
 #           hFocalLength
