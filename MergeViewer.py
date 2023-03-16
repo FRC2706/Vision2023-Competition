@@ -39,6 +39,7 @@ from DetectIntakeItem import *
 from FindCube import *
 from FindCone import *
 from FindTape import *
+from FindAprilTagRobotpy import *
 
 print()
 print("--- Merge Viewer Starting ---")
@@ -61,8 +62,8 @@ webCamNumber = 1
 Tape = False
 Cone = False
 Cube = False
-Intake = True
-AprilTag = False
+Intake = False
+AprilTag = True
 CameraFOV = 68.5
 CameraTiltAngle = 30
 OverlayScaleFactor = 1
@@ -104,7 +105,7 @@ else:  # implies images are to be read
     # Outer Target Images
     #images, imagename = load_images_from_folder("./2023VisionSampleImages/RetroTape")
     #images, imagename = load_images_from_folder("/Users/johngray/FRC/Vision2023-Competition/2023VisionSampleImages/RetroTape")
-    images, imagename = load_images_from_folder("./2023VisionSampleImages/RealCameraImages")
+    images, imagename = load_images_from_folder("./2023VisionSampleImages/AprilTags")
     #images, imagename = load_images_from_folder("./HubImgSketchup")
     print(imagename)
 
@@ -175,8 +176,7 @@ while stayInLoop or cap.isOpened():
         processed, TargetPixelFromCenter, YawToTarget, distance = findTape(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
     
     if Intake:
-        processed = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
-        processed = DetectIntakeItem(processed, MergeVisionPipeLineTableName)
+        processed = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
         processed, yaw, area = findCone(processed, MergeVisionPipeLineTableName,CameraFOV)
         processed, yaw, area = findCube(processed, MergeVisionPipeLineTableName,CameraFOV)
 
