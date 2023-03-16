@@ -206,6 +206,4 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
 # Checks if cone contours are worthy based off of contour area and (not currently) hull area
 def checkCube(cntArea, image_width,boundingRectContArea):
     goodCone = (boundingRectContArea > 0.5)
-    if goodCone:
-        print("cntArea " + str(cntArea) + " IMGWIDTH " + str(image_width) + " BOUNDING rect cont area " + str(boundingRectContArea) + str(goodCone))
     return goodCone

@@ -503,7 +503,8 @@ if __name__ == "__main__":
 
         #switch = 2
 
-        
+        if (CameraRotation):
+           frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)     
 
         #Check if Network Table value Tape is True
         if (networkTableVisionPipeline.getBoolean("Tape", True)): 
@@ -520,7 +521,7 @@ if __name__ == "__main__":
                     cv2.putText(processed, "RPM: " + str(round(rpm,2)), (20, 340), cv2.FONT_HERSHEY_COMPLEX, 1.0,white)
 
 
-            
+       
 
         if (networkTableVisionPipeline.getBoolean("AprilTag", True)):
            processed = findAprilTag(frame, MergeVisionPipeLineTableName, timestamp)
