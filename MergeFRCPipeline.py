@@ -508,7 +508,6 @@ if __name__ == "__main__":
 
         #Check if Network Table value Tape is True
         if (networkTableVisionPipeline.getBoolean("Tape", True)): 
-            frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
             threshold = threshold_video(lower_green, upper_green, frame)
             if (networkTableVisionPipeline.getBoolean("SendMask", False)):
                 processed = threshold
