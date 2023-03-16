@@ -17,17 +17,6 @@ except ImportError:
 APRILTAG_SIZE = 0.151 # meters
 FOCAL_LENGTH_PIXELS = 333.82
 
-# Marker size and object
-marker_size = 5 + 15/16.0   # FRC targets might be a different size
-
-# Data about the marker for solvePnP's SOLVEPNP_IPPE_SQUARE stuff
-object_points = []
-object_points.append( [float(-marker_size / 2),float(marker_size / 2), 0])
-object_points.append( [float(marker_size / 2),float(marker_size / 2), 0])
-object_points.append(  [float(marker_size / 2),float(-marker_size / 2), 0])
-object_points.append(  [float(-marker_size / 2),float(-marker_size / 2), 0])
-object_points = np.array(object_points)
-
 lastAprilTagTimestamp = 0
 
 # This is the main function initiated from MergeViewer and Merge2023Pipeline
@@ -58,7 +47,7 @@ def process_apriltag(estimator, tag):
     center = tag.getCenter()
     hamming = tag.getHamming()
     decision_margin = tag.getDecisionMargin()
-    print("Hamming for {} is {} with decision margin {}".format(tag_id, hamming, decision_margin))
+    # print("Hamming for {} is {} with decision margin {}".format(tag_id, hamming, decision_margin))
 
     est = estimator.estimateOrthogonalIteration(tag, 50)
     pose = est.pose1
@@ -76,7 +65,7 @@ def draw_tag(frame, result):
     assert frame is not None
     assert result is not None
     tag_id, pose, center = result
-    print(center)
+    # print(center)
     cv2.circle(frame, (int(center.x), int(center.y)), 50, (255, 0, 255), 3)
     msg = f"Tag ID: {tag_id} Pose: {pose}"
     cv2.putText(frame, msg, (100, 50 * 1), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
@@ -102,7 +91,7 @@ def detect_and_process_apriltag(frame, detector, estimator, MergeVisionPipeLineT
         for tag in filter_tags:
             
             result = process_apriltag(estimator, tag)
-            print(result)
+            # print(result)
 
             tag_id = result[0]
             tvec = result[1]
