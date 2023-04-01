@@ -51,7 +51,18 @@ def findCone(frame, MergeVisionPipeLineTableName, CameraFOV):
         cntsSorted = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)[:5]#what is this 5?
         image,Yaw,area = findCones(cntsSorted, image, CameraFOV)
         # Shows the contours overlayed on the original video
-        
+    src_img = cv2.imread('DoubleSubstation.jpg')
+    average_color_row = np.average(src_img, axis=0)
+    average_color = np.average(average_color_row, axis=0)
+    print(average_color)
+
+    d_img = np.ones((312,312,3), dtype=np.uint8)
+    d_img[:,:] = average_color
+
+    cv2.imshow('Source image',src_img)
+    cv2.imshow('Average Color',d_img)
+    cv2.waitKey(0)
+
     return image, Yaw, area
 
 def findCones(cntsSorted, image, CameraFOV):
