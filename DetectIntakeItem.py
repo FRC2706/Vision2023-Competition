@@ -15,22 +15,13 @@ except ImportError:
 # Finds the balls from the masked image and displays them on original stream + network tables
 def DetectIntakeItem(frame, MergeVisionPipeLineTableName):
 
-    screenHeight, screenWidth,_ = frame.shape
-    #where on the screen do you want to check?
-    x = round(screenWidth/2 - screenWidth/(4)/2)
-    y = round(screenHeight - screenHeight/(4))
-    w = round(screenWidth/(4))
-    h = round(screenHeight/(4))
+    H, W,_ = frame.shape
 
     # Copies frame and stores it in image
     image = frame.copy()
-    cv2.rectangle(image,(0,0),(x,screenHeight),([0,0,0]),-1)
-    cv2.rectangle(image,(x,0),(x+w,y),([0,0,0]),-1)
-    cv2.rectangle(image,(x+w,0),(screenWidth,screenHeight),([0,0,0]),-1)
 
     #Create a yellow mask
     MaskYellow = threshold_video(lower_yellow, upper_yellow, image)
-    displayMask = MaskYellow
     #create a Purple Mask
     MaskPurple = threshold_video(lower_purple, upper_purple, image)
     
@@ -40,18 +31,14 @@ def DetectIntakeItem(frame, MergeVisionPipeLineTableName):
         _, contours, _ = cv2.findContours(MaskYellow, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
     else:
         contours, _ = cv2.findContours(MaskYellow, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
-    image, FoundYellow, DesiredRectFilledArea = FindRectFillAmount(image,contours,x,y,w,h)
+    FoundYellow, coneRectFilledArea = FindRectFillAmount(contours,H,W, image)
     
-    if FoundYellow == False:
-            #find the contours of the mask 
-        if is_cv3():
-            _, contours, _ = cv2.findContours(MaskPurple, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
-        else:
-            contours, _ = cv2.findContours(MaskPurple, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
-        image,FoundPurple, DesiredRectFilledArea = FindRectFillAmount(image,contours,x,y,w,h)
-        displayMask = MaskPurple
+        #find the contours of the mask 
+    if is_cv3():
+        _, contours, _ = cv2.findContours(MaskPurple, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
     else:
-        FoundPurple = False
+        contours, _ = cv2.findContours(MaskPurple, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
+    FoundPurple, _ = FindRectFillAmount(contours,H,W, image)
     
     cv2.putText(frame, "Yellow: " + str(FoundYellow), (10, 350), cv2.FONT_HERSHEY_COMPLEX, .9, white)
     cv2.putText(frame, "Purple: " + str(FoundPurple), (10, 375), cv2.FONT_HERSHEY_COMPLEX, .9, white)
@@ -65,38 +52,39 @@ def DetectIntakeItem(frame, MergeVisionPipeLineTableName):
     
     if FoundYellow:
         publishBoolean(MergeVisionPipeLineTableName, "DetectCone", True)
-    elif FoundPurple:
-        publishBoolean(MergeVisionPipeLineTableName, "DetectCube", True)
-    elif FoundPurple and FoundYellow:
-        publishBoolean(MergeVisionPipeLineTableName, "DetectCone", True)
-        publishBoolean(MergeVisionPipeLineTableName, "DetectCube", True)
+        print("coneFound")
+        if coneRectFilledArea > 0.9:
+            publishBoolean(MergeVisionPipeLineTableName, "ConeTopInwards", True)
+            print("ConeTopInwards")
+        else:
+            publishBoolean(MergeVisionPipeLineTableName, "ConeTopInwards", False)
     else:
         publishBoolean(MergeVisionPipeLineTableName, "DetectCone", False)
+    if FoundPurple:
+        publishBoolean(MergeVisionPipeLineTableName, "DetectCube", True)
+    else:
         publishBoolean(MergeVisionPipeLineTableName, "DetectCube", False)
-    return frame
+    return image
 
-def FindRectFillAmount(image,contours,x,y,w,h):
+def FindRectFillAmount(contours,H,W, image):
     # Seen vision targets (correct angle, adjacent to each other)
     #cargo = []
 
     if len(contours) > 0:
-        
-        cntsArea = 0
-        for cnt in contours:
-            cntx, cnty, cntw, cnth = cv2.boundingRect(cnt)
-            #print("cnth: " + str(cnth))
-            
-            cv2.drawContours(image, [cnt], 0, green, 2)
-            # Calculate Contour area
-            cntsArea += cv2.contourArea(cnt)
-            #print("Area of contour: " + str(cntsArea))
-        desiredRectArea = w*h
+        cnt = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)[0]
+        _, _, cntw, cnth = cv2.boundingRect(cnt)
+        # Calculate Contour area
+        cntArea = cv2.contourArea(cnt)
+        boundingRectFilledArea = cntArea/(cnth*cntw)
+        #print("Area of contour: " + str(cntsArea))
+        imageArea = W*H
         #percentage of contours in desired rect
-        desiredRectFilledArea = float(cntsArea/desiredRectArea)
-        if desiredRectFilledArea > 0.1:
+        imageFilledArea = float(cntArea/imageArea)
+        if imageFilledArea > 0.35:
             Found = True
         else:
             Found = False
-            
-        return image, Found, desiredRectFilledArea
-    return image, False, 0
+    else:
+        Found = False
+        boundingRectFilledArea = 0.0 
+    return Found, boundingRectFilledArea
