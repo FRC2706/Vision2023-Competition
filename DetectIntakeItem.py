@@ -52,7 +52,7 @@ def DetectIntakeItem(frame, MergeVisionPipeLineTableName):
     
     if FoundYellow:
         publishBoolean(MergeVisionPipeLineTableName, "DetectCone", True)
-        if coneRectFilledArea < 0.8:
+        if coneRectFilledArea < 0.85:
             publishBoolean(MergeVisionPipeLineTableName, "ConeNoseIn", True)
         else:
             publishBoolean(MergeVisionPipeLineTableName, "ConeNoseIn", False)
@@ -80,7 +80,7 @@ def FindRectFillAmount(contours,H,W, image):
         imageArea = W*H
         #percentage of contours in desired rect
         imageFilledArea = float(cntArea/imageArea)
-        if imageFilledArea > 0.35:
+        if imageFilledArea > 0.3:
             Found = True
         else:
             Found = False
