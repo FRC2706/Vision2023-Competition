@@ -57,13 +57,14 @@ def DetectIntakeItem(frame, MergeVisionPipeLineTableName):
     average_color_one = np.average(average_color_row_one, axis=0)
     print(average_color_one)
 
-    cropped_image_two = image[round(3*H/4):round(H-1), round(W/4):round(3*W/4)]
+    cropped_image_two = image[round(3*H/4):round(H-10), round(3*W/8):round(5*W/8)]
     hsv = cv2.cvtColor(cropped_image_two, cv2.COLOR_BGR2HSV)
     average_color_row_two = np.average(hsv, axis=0)
     average_color_two = np.average(average_color_row_two, axis=0)
     print(average_color_two)
+    
 
-    if (average_color_one[2]> average_color_two[2]+8):
+    if (average_color_one[2]> average_color_two[2]+25):
         print ("nose in in in in")
     else:
         print("base in")
