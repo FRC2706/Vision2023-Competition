@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import math
+import colorsys
 from VisionUtilities import * 
 from VisionConstants import *
 from DistanceFunctions import *
@@ -51,16 +52,41 @@ def findCone(frame, MergeVisionPipeLineTableName, CameraFOV):
         cntsSorted = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)[:5]#what is this 5?
         image,Yaw,area = findCones(cntsSorted, image, CameraFOV)
         # Shows the contours overlayed on the original video
-    src_img = cv2.imread('DoubleSubstation.jpg')
-    average_color_row = np.average(src_img, axis=0)
-    average_color = np.average(average_color_row, axis=0)
-    print(average_color)
 
+    #Crop image
+    img = cv2.imread("./2023VisionSampleImages/baseIn.png")
+    cropped_image = img[180:380, 430:560]
+    cv2.imshow("cropped", cropped_image)
+    # Save the cropped image
+    cv2.imwrite("./2023VisionSampleImages/cropped.jpg", cropped_image)
+
+    img = cv2.imread("./2023VisionSampleImages/baseIn.png")
+    cropped_image = img[180:380, 230:360]
+    cv2.imshow("cropped_two", cropped_image)
+    # Save the cropped image
+    cv2.imwrite("./2023VisionSampleImages/cropped_two.jpg", cropped_image)
+
+    
+    #get average colour value of cropped image
+    src_img = cv2.imread("./2023VisionSampleImages/cropped.jpg")
+    hsv = cv2.cvtColor(src_img, cv2.COLOR_BGR2HSV)
+    average_color_row_one = np.average(src_img, axis=0)
+    average_color_one = np.average(average_color_row_one, axis=0)
+    print(average_color_one)
     d_img = np.ones((312,312,3), dtype=np.uint8)
-    d_img[:,:] = average_color
+    d_img[:,:] = average_color_one
+    cv2.imshow('Average Color one',d_img)
 
-    cv2.imshow('Source image',src_img)
-    cv2.imshow('Average Color',d_img)
+    src_img = cv2.imread("./2023VisionSampleImages/cropped_two.jpg")
+    hsv = cv2.cvtColor(src_img, cv2.COLOR_BGR2HSV)
+    average_color_row_two = np.average(src_img, axis=0)
+    average_color_two = np.average(average_color_row_two, axis=0)
+    print(average_color_two)
+    d_img = np.ones((312,312,3), dtype=np.uint8)
+    d_img[:,:] = average_color_two
+    cv2.imshow('Average Color two',d_img)
+
+
     cv2.waitKey(0)
 
     return image, Yaw, area
