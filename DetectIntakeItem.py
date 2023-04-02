@@ -52,12 +52,10 @@ def DetectIntakeItem(frame, MergeVisionPipeLineTableName):
     
     if FoundYellow:
         publishBoolean(MergeVisionPipeLineTableName, "DetectCone", True)
-        print("coneFound")
-        if coneRectFilledArea > 0.9:
-            publishBoolean(MergeVisionPipeLineTableName, "ConeTopInwards", True)
-            print("ConeTopInwards")
+        if coneRectFilledArea < 0.8:
+            publishBoolean(MergeVisionPipeLineTableName, "ConeNoseIn", True)
         else:
-            publishBoolean(MergeVisionPipeLineTableName, "ConeTopInwards", False)
+            publishBoolean(MergeVisionPipeLineTableName, "ConeNoseIn", False)
     else:
         publishBoolean(MergeVisionPipeLineTableName, "DetectCone", False)
     if FoundPurple:
@@ -72,10 +70,12 @@ def FindRectFillAmount(contours,H,W, image):
 
     if len(contours) > 0:
         cnt = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)[0]
-        _, _, cntw, cnth = cv2.boundingRect(cnt)
+        cntx, cnty, cntw, cnth = cv2.boundingRect(cnt)
+        #cv2.rectangle(image,[cntx, cnty], [cntw, cnth],[255,0,0],4)
         # Calculate Contour area
         cntArea = cv2.contourArea(cnt)
         boundingRectFilledArea = cntArea/(cnth*cntw)
+        #print(boundingRectFilledArea)
         #print("Area of contour: " + str(cntsArea))
         imageArea = W*H
         #percentage of contours in desired rect

@@ -176,8 +176,8 @@ while stayInLoop or cap.isOpened():
     
     if Intake:
         processed = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
-        #processed, yaw, area = findCone(processed, MergeVisionPipeLineTableName,CameraFOV)
-        #processed, yaw, area = findCube(processed, MergeVisionPipeLineTableName,CameraFOV)
+        processed, yaw, area = findCone(processed, MergeVisionPipeLineTableName,CameraFOV)
+        processed, yaw, area = findCube(processed, MergeVisionPipeLineTableName,CameraFOV)
 
     if Cone:
         processed = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
