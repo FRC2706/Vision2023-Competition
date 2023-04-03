@@ -51,25 +51,29 @@ def DetectIntakeItem(frame, MergeVisionPipeLineTableName):
     #cv2.imshow("area",image)
     
 
-    cropped_image_one = image[round(H/4):round(H/2), round(W/4):round(3*W/4)]
-    hsv = cv2.cvtColor(cropped_image_one, cv2.COLOR_BGR2HSV)
+    cropped_image_one = image[round(5*H/14):round(7*H/14), round(4*W/9):round(5*W/9)]
+    #hsv = cv2.cvtColor(cropped_image_one, cv2.COLOR_BGR2HSV)
     average_color_row_one = np.average(hsv, axis=0)
     average_color_one = np.average(average_color_row_one, axis=0)
-    print(average_color_one)
+    cv2.imshow('Source image one',cropped_image_one)
+    #print(average_color_one)
 
-    cropped_image_two = image[round(3*H/4):round(H-10), round(3*W/8):round(5*W/8)]
-    hsv = cv2.cvtColor(cropped_image_two, cv2.COLOR_BGR2HSV)
+    cropped_image_two = image[round(5*H/7+10):round(6*H/7), round(2*W/5):round(3*W/5)]
+    #hsv = cv2.cvtColor(cropped_image_two, cv2.COLOR_BGR2HSV)
     average_color_row_two = np.average(hsv, axis=0)
     average_color_two = np.average(average_color_row_two, axis=0)
-    print(average_color_two)
+    cv2.imshow('Source image two',cropped_image_two)
+    #print(average_color_two)
     
+    if average_color_one[1, 2, 3] > lower_grey and average_color_one[1, 2, 3] < upper_grey:
 
-    if (average_color_one[2]> average_color_two[2]+25):
-        print ("nose in in in in")
-    else:
-        print("base in")
+        if (average_color_one[2]> average_color_two[2]+25):
+            print ("base in")
+        else:
+            print("nose in")
         
     if FoundYellow:
+        print("yes")
         publishBoolean(MergeVisionPipeLineTableName, "DetectCone", True)
     else:
         publishBoolean(MergeVisionPipeLineTableName, "DetectCone", False)

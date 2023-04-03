@@ -124,5 +124,8 @@ upper_blue = np.array([115,213,255])
 lower_purple = np.array([115,80,45]) #was 115,80,45 at kingston
 upper_purple = np.array([170,170,255]) #was 170,170,255 at kingston
 
+lower_grey = np.aray([100, 25, 30])
+upper_grey = np.array([167, 130, 80])
+
 
 blingColour = 0
