@@ -28,3 +28,11 @@ def threshold_video(lower_color, upper_color, blur):
     # Returns the masked imageBlurs video to smooth out image
 
     return combined_mask
+
+def colourBetween(lower_colour, upper_colour, testing_colour_HSV):
+    inRange = True
+    for hsvInt in range(3):
+        if inRange:
+            if not (testing_colour_HSV[hsvInt]>lower_colour[hsvInt] and testing_colour_HSV[hsvInt]<upper_colour[hsvInt]):
+                inRange = False
+    return inRange

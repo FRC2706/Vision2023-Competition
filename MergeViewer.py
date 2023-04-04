@@ -104,7 +104,7 @@ else:  # implies images are to be read
     # Outer Target Images
     #images, imagename = load_images_from_folder("./2023VisionSampleImages/RetroTape")
     #images, imagename = load_images_from_folder("/Users/johngray/FRC/Vision2023-Competition/2023VisionSampleImages/RetroTape")
-    images, imagename = load_images_from_folder("./ConeDirectionImages")
+    images, imagename = load_images_from_folder("./2023VisionSampleImages/test")
     #images, imagename = load_images_from_folder("./HubImgSketchup")
     print(imagename)
 
@@ -175,6 +175,8 @@ while stayInLoop or cap.isOpened():
         processed, TargetPixelFromCenter, YawToTarget, distance = findTape(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
     
     if Intake:
+        cv2.imshow("colourRange", frame)
+        cv2.setMouseCallback("colourRange", colourRange, frame)
         processed = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
         processed, yaw, area = findCone(processed, MergeVisionPipeLineTableName,CameraFOV)
         processed, yaw, area = findCube(processed, MergeVisionPipeLineTableName,CameraFOV)

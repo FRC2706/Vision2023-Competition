@@ -112,19 +112,19 @@ upper_green = np.array([90, 255, 255])
 #lower_green = np.array([23, 50, 35])
 #upper_green = np.array([85, 255, 255])
 
-lower_yellow = np.array([5, 150, 90]) # was 0, 150, 110 at kingston
-upper_yellow = np.array([25, 255, 255])# was 25, 255, 255 at kingston
+lower_yellow = np.array([10, 220, 25]) # was 0, 150, 110 at kingston
+upper_yellow = np.array([30, 256, 110])# was 25, 255, 255 at kingston
 # masks for red and blue cargo (HSV)
 lower_red = np.array([138,106,123])
 upper_red = np.array([180,255,255])
 
-lower_blue = np.array([64,127,116]) 
-upper_blue = np.array([115,213,255]) 
+lower_blue = np.array([70,220,25]) 
+upper_blue = np.array([110,256,150]) 
 
-lower_purple = np.array([115,80,45]) #was 115,80,45 at kingston
-upper_purple = np.array([170,170,255]) #was 170,170,255 at kingston
+lower_purple = np.array([90,220,60]) #was 115,80,45 at kingston
+upper_purple = np.array([110,256,180]) #was 170,170,255 at kingston
 
-lower_grey = np.aray([100, 25, 30])
+lower_grey = np.array([100, 25, 30])
 upper_grey = np.array([167, 130, 80])
 
 

@@ -20,10 +20,12 @@ except ImportError:
 
 # Finds the balls from the masked image and displays them on original stream + network tables
 def findCube(frame, MergeVisionPipeLineTableName,CameraFOV):
+    H, W,_ = frame.shape
     # Copies frame and stores it in image
     image = frame.copy()
     #Create a purple mask
     MaskPurple = threshold_video(lower_purple, upper_purple, image)
+    MaskPurple = MaskPurple[0:round(6*H/7), 0:W-1]
     #find the contours of the mask 
     if is_cv3():
         _, contours, _ = cv2.findContours(MaskPurple, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
@@ -37,8 +39,7 @@ def findCube(frame, MergeVisionPipeLineTableName,CameraFOV):
         image,Yaw, area = findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName)
     # Shows the contours overlayed on the original video
 
-    cv2.imshow("colourRange", image)
-    cv2.setMouseCallback("colourRange", colourRange, image)
+    
     screenHeight, screenWidth, _ = image.shape
     # Gets center of width
     centerX = (screenWidth / 2) - .5
