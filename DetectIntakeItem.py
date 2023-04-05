@@ -77,7 +77,9 @@ def DetectIntakeItem(frame, MergeVisionPipeLineTableName):
     if FoundYellow:
         #print("yes")
         publishBoolean(MergeVisionPipeLineTableName, "DetectCone", True)
-        if (average_color_one[2]> average_color_two[2]+90) and not colourBetween(lower_grey,upper_grey, average_color_one):
+        if (average_color_one[2]> average_color_two[2]+70):
+            if colourBetween(lower_grey,upper_grey, average_color_one):
+                print("grey")
             publishBoolean(MergeVisionPipeLineTableName, "ConeNoseIn", False)
             print ("base in")
         else:

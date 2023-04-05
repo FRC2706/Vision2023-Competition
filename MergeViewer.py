@@ -175,11 +175,12 @@ while stayInLoop or cap.isOpened():
         processed, TargetPixelFromCenter, YawToTarget, distance = findTape(frame, CameraFOV, CameraTiltAngle, threshold, MergeVisionPipeLineTableName, past_distances)
     
     if Intake:
-        cv2.imshow("colourRange", frame)
-        cv2.setMouseCallback("colourRange", colourRange, frame)
-        processed = DetectIntakeItem(frame, MergeVisionPipeLineTableName)
+        processed = cv2.rotate(frame,cv2.ROTATE_90_CLOCKWISE)
+        processed = DetectIntakeItem(processed, MergeVisionPipeLineTableName)
         processed, yaw, area = findCone(processed, MergeVisionPipeLineTableName,CameraFOV)
         processed, yaw, area = findCube(processed, MergeVisionPipeLineTableName,CameraFOV)
+        cv2.imshow("colourRange", processed)
+        cv2.setMouseCallback("colourRange", colourRange, processed)
 
     if Cone:
         processed = findCone(frame, MergeVisionPipeLineTableName,CameraFOV)
