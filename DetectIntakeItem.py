@@ -26,6 +26,10 @@ def DetectIntakeItem(frame, MergeVisionPipeLineTableName):
                 pixel[0] = 0
             else:
                 pixel[0] -=100
+            if pixel[1]-50 < 0:
+                pixel[1] = 0
+            else:
+                pixel[1] -=50
 
     #Create a yellow mask
     MaskYellow = threshold_video(lower_yellow, upper_yellow, image)
@@ -81,10 +85,10 @@ def DetectIntakeItem(frame, MergeVisionPipeLineTableName):
             if colourBetween(lower_grey,upper_grey, average_color_one):
                 print("grey")
             publishBoolean(MergeVisionPipeLineTableName, "ConeNoseIn", False)
-            print ("base in")
+            #print ("base in")
         else:
             publishBoolean(MergeVisionPipeLineTableName, "ConeNoseIn", True)
-            print("nose in")
+            #print("nose in")
     else:
         publishBoolean(MergeVisionPipeLineTableName, "DetectCone", False)
     if FoundPurple:

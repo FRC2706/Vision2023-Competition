@@ -190,6 +190,6 @@ def findCones(cntsSorted, image, CameraFOV):
 
 # Checks if cone contours are worthy based off of contour area and (not currently) hull area
 def checkCone(expectedAreaContArea):
-    goodCone = (expectedAreaContArea > 0.8)
+    goodCone = (expectedAreaContArea > 0.6)
     #print(str(goodCone))
     return goodCone

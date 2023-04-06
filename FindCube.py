@@ -25,7 +25,7 @@ def findCube(frame, MergeVisionPipeLineTableName,CameraFOV):
     image = frame.copy()
     #Create a purple mask
     MaskPurple = threshold_video(lower_purple, upper_purple, image)
-    MaskPurple = MaskPurple[0:round(6*H/7), 0:W-1]
+    MaskPurple = MaskPurple[0:round(4*H/5), 0:W-1]
     #find the contours of the mask 
     if is_cv3():
         _, contours, _ = cv2.findContours(MaskPurple, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
@@ -84,10 +84,7 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
         #print("expected area: " + str(expectedArea))
 
         #percentage of contour in bounding rect
-        boundingRectContArea = float(cntArea/boundingRectArea)
-        #print("Percentage contour area in bounding rect: " + str(boundingRectContArea))
-        #percentage of contour in area of a cone standing up at that size
-        expectedAreaContArea = float(cntArea/expectedArea)
+       
         #print("percentage of contour in area of a Cube at that size: " + str(expectedAreaContArea))
 
         #find the height of the bottom (y position of contour)
@@ -97,7 +94,7 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
         M = cv2.moments(cnt)
 
         # Filters contours based off of size
-        if (checkCube(cntArea, image_width, boundingRectContArea)):
+        if (checkCube(cntArea, image_width, cntArea, boundingRectArea)):
             ### MOSTLY DRAWING CODE, BUT CALCULATES IMPORTANT INFO ###
             # Gets the centeroids of contour
             if M["m00"] != 0:
@@ -205,6 +202,8 @@ def findCubes(CameraFOV,contours, image,MergeVisionPipeLineTableName):
 
 
 # Checks if cone contours are worthy based off of contour area and (not currently) hull area
-def checkCube(cntArea, image_width,boundingRectContArea):
-    goodCone = (boundingRectContArea > 0.5)
+def checkCube(cntArea, image_width,area, rectArea):
+    goodCone = (area/rectArea > 0.5)
+    if goodCone:
+        goodCone = (area > pow(image_width/8,2))
     return goodCone
