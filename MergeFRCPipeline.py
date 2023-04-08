@@ -204,12 +204,14 @@ def threshold_video(lower_color, upper_color, blur):
 
     # Returns the masked imageBlurs video to smooth out image
     global frameStop
-    if frameStop == 1:
-        global ImageCounter, matchNumber, matchNumberDefault
-        matchNumber = networkTableMatch.getNumber("MatchNumber", 0)
-        if matchNumber == 0:
-            matchNumber = matchNumberDefault
-        cv2.imwrite('/mnt/VisionImages/visionImg-' + str(matchNumber) + "-" + str(ImageCounter) + '_mask.png',
+    if (networkTableVisionPipeline.getBoolean("WriteImages", True)): 
+        if frameStop == 1:
+            global ImageCounter, matchNumber, matchNumberDefault
+            matchNumber = networkTableMatch.getNumber("MatchNumber", 0)
+            if matchNumber == 0:
+                matchNumber = matchNumberDefault
+           
+            cv2.imwrite('/mnt/VisionImages/visionImg-' + str(matchNumber) + "-" + str(ImageCounter) + '_mask.png',
                     combined_mask)
     return combined_mask
 
@@ -480,11 +482,13 @@ if __name__ == "__main__":
         # Tell the CvSink to grab a frame from the camera and put it
         # in the source image.  If there is an error notify the output.
         timestamp, img = cap.read()
-        if frameStop == 0:
-            matchNumber = networkTableMatch.getNumber("MatchNumber", 0)
-            if matchNumber == 0:
-                matchNumber = matchNumberDefault
-            cv2.imwrite('/mnt/VisionImages/visionImg-' + str(matchNumber) + "-" + str(ImageCounter) + '_Raw.png',
+        if (networkTableVisionPipeline.getBoolean("WriteImages", True)): 
+            if frameStop == 0:
+                matchNumber = networkTableMatch.getNumber("MatchNumber", 0)
+                if matchNumber == 0:
+                    matchNumber = matchNumberDefault
+                 
+                cv2.imwrite('/mnt/VisionImages/visionImg-' + str(matchNumber) + "-" + str(ImageCounter) + '_Raw.png',
                         img)
         # Uncomment if camera is mounted upside down
         if networkTableVisionPipeline.getBoolean("TopCamera", False):
